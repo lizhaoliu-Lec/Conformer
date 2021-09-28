@@ -224,7 +224,7 @@ def test_transformer_encoder_layer(embed_dims=8,
                                          feedforward_channels)
         out = module('input')
         assert out == 'input_selfattn(residual=input)_norm0_ffn' \
-            '(residual=norm0)_norm1'
+                      '(residual=norm0)_norm1'
 
         # pre_norm
         order = ('norm', 'selfattn', 'norm', 'ffn')
@@ -232,7 +232,7 @@ def test_transformer_encoder_layer(embed_dims=8,
             embed_dims, num_heads, feedforward_channels, order=order)
         out = module('input')
         assert out == 'input_norm0_selfattn(residual=input)_' \
-            'norm1_ffn(residual=selfattn)'
+                      'norm1_ffn(residual=selfattn)'
 
     test_order()
 
@@ -339,7 +339,7 @@ def test_transformer_decoder_layer(embed_dims=8,
                                          feedforward_channels)
         out = module('input', 'memory')
         assert out == 'input_selfattn(residual=input)_norm0_multiheadattn' \
-            '(residual=norm0)_norm1_ffn(residual=norm1)_norm2'
+                      '(residual=norm0)_norm1_ffn(residual=norm1)_norm2'
 
         # pre_norm
         order = ('norm', 'selfattn', 'norm', 'multiheadattn', 'norm', 'ffn')
@@ -347,8 +347,8 @@ def test_transformer_decoder_layer(embed_dims=8,
             embed_dims, num_heads, feedforward_channels, order=order)
         out = module('input', 'memory')
         assert out == 'input_norm0_selfattn(residual=input)_norm1_' \
-            'multiheadattn(residual=selfattn)_norm2_ffn(residual=' \
-            'multiheadattn)'
+                      'multiheadattn(residual=selfattn)_norm2_ffn(residual=' \
+                      'multiheadattn)'
 
     test_order()
 

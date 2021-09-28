@@ -6,7 +6,6 @@ from mmdet.core import BboxOverlaps2D, bbox_overlaps
 
 
 def test_bbox_overlaps_2d(eps=1e-7):
-
     def _construct_bbox(num_bbox=None):
         img_h = int(np.random.randint(3, 1000))
         img_w = int(np.random.randint(3, 1000))
@@ -26,15 +25,15 @@ def test_bbox_overlaps_2d(eps=1e-7):
     bboxes1 = torch.cat((bboxes1, torch.rand((num_bbox, 1))), 1)
     bboxes2 = torch.cat((bboxes2, torch.rand((num_bbox, 1))), 1)
     gious = self(bboxes1, bboxes2, 'giou', True)
-    assert gious.size() == (num_bbox, ), gious.size()
+    assert gious.size() == (num_bbox,), gious.size()
     assert torch.all(gious >= -1) and torch.all(gious <= 1)
 
     # is_aligned is True, bboxes1.size(-2) == 0
     bboxes1 = torch.empty((0, 4))
     bboxes2 = torch.empty((0, 4))
     gious = self(bboxes1, bboxes2, 'giou', True)
-    assert gious.size() == (0, ), gious.size()
-    assert torch.all(gious == torch.empty((0, )))
+    assert gious.size() == (0,), gious.size()
+    assert torch.all(gious == torch.empty((0,)))
     assert torch.all(gious >= -1) and torch.all(gious <= 1)
 
     # is_aligned is True, and bboxes.ndims > 2
@@ -99,7 +98,7 @@ def test_bbox_overlaps_2d(eps=1e-7):
     # test mode 'iof'
     ious = bbox_overlaps(bboxes1, bboxes2, 'iof', is_aligned=True, eps=eps)
     assert torch.all(ious >= -1) and torch.all(ious <= 1)
-    assert ious.size() == (bboxes1.size(0), )
+    assert ious.size() == (bboxes1.size(0),)
     ious = bbox_overlaps(bboxes1, bboxes2, 'iof', eps=eps)
     assert torch.all(ious >= -1) and torch.all(ious <= 1)
     assert ious.size() == (bboxes1.size(0), bboxes2.size(0))

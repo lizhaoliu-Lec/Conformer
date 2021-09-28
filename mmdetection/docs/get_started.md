@@ -7,7 +7,8 @@
 - GCC 5+
 - [MMCV](https://mmcv.readthedocs.io/en/latest/#installation)
 
-The compatible MMDetection and MMCV versions are as below. Please install the correct version of MMCV to avoid installation issues.
+The compatible MMDetection and MMCV versions are as below. Please install the correct version of MMCV to avoid
+installation issues.
 
 | MMDetection version |    MMCV version     |
 |:-------------------:|:-------------------:|
@@ -24,8 +25,8 @@ The compatible MMDetection and MMCV versions are as below. Please install the co
 | 2.1.0               | mmcv>=0.5.9, <=0.6.1|
 | 2.0.0               | mmcv>=0.5.1, <=0.5.8|
 
-Note: You need to run `pip uninstall mmcv` first if you have mmcv installed.
-If mmcv and mmcv-full are both installed, there will be `ModuleNotFoundError`.
+Note: You need to run `pip uninstall mmcv` first if you have mmcv installed. If mmcv and mmcv-full are both installed,
+there will be `ModuleNotFoundError`.
 
 ## Installation
 
@@ -42,25 +43,25 @@ If mmcv and mmcv-full are both installed, there will be `ModuleNotFoundError`.
     conda install pytorch torchvision -c pytorch
     ```
 
-    Note: Make sure that your compilation CUDA version and runtime CUDA version match.
-    You can check the supported CUDA version for precompiled packages on the [PyTorch website](https://pytorch.org/).
+   Note: Make sure that your compilation CUDA version and runtime CUDA version match. You can check the supported CUDA
+   version for precompiled packages on the [PyTorch website](https://pytorch.org/).
 
-    `E.g.1` If you have CUDA 10.1 installed under `/usr/local/cuda` and would like to install
-    PyTorch 1.5, you need to install the prebuilt PyTorch with CUDA 10.1.
+   `E.g.1` If you have CUDA 10.1 installed under `/usr/local/cuda` and would like to install PyTorch 1.5, you need to
+   install the prebuilt PyTorch with CUDA 10.1.
 
     ```shell
     conda install pytorch cudatoolkit=10.1 torchvision -c pytorch
     ```
 
-    `E.g. 2` If you have CUDA 9.2 installed under `/usr/local/cuda` and would like to install
-    PyTorch 1.3.1., you need to install the prebuilt PyTorch with CUDA 9.2.
+   `E.g. 2` If you have CUDA 9.2 installed under `/usr/local/cuda` and would like to install PyTorch 1.3.1., you need to
+   install the prebuilt PyTorch with CUDA 9.2.
 
     ```shell
     conda install pytorch=1.3.1 cudatoolkit=9.2 torchvision=0.4.2 -c pytorch
     ```
 
-    If you build PyTorch from source instead of installing the prebuilt pacakge,
-    you can use more CUDA versions such as 9.0.
+   If you build PyTorch from source instead of installing the prebuilt pacakge, you can use more CUDA versions such as
+   9.0.
 
 3. Install mmcv-full, we recommend you to install the pre-build package as below.
 
@@ -68,8 +69,8 @@ If mmcv and mmcv-full are both installed, there will be `ModuleNotFoundError`.
     pip install mmcv-full==latest+torch1.6.0+cu101 -f https://download.openmmlab.com/mmcv/dist/index.html
     ```
 
-    See [here](https://github.com/open-mmlab/mmcv#install-with-pip) for different versions of MMCV compatible to different PyTorch and CUDA versions.
-    Optionally you can choose to compile mmcv from source by the following command
+   See [here](https://github.com/open-mmlab/mmcv#install-with-pip) for different versions of MMCV compatible to
+   different PyTorch and CUDA versions. Optionally you can choose to compile mmcv from source by the following command
 
     ```shell
     git clone https://github.com/open-mmlab/mmcv.git
@@ -78,7 +79,7 @@ If mmcv and mmcv-full are both installed, there will be `ModuleNotFoundError`.
     cd ..
     ```
 
-    Or directly run
+   Or directly run
 
     ```shell
     pip install mmcv-full
@@ -100,22 +101,22 @@ If mmcv and mmcv-full are both installed, there will be `ModuleNotFoundError`.
 
 Note:
 
-a. Following the above instructions, MMDetection is installed on `dev` mode
-, any local modifications made to the code will take effect without the need to reinstall it.
+a. Following the above instructions, MMDetection is installed on `dev` mode , any local modifications made to the code
+will take effect without the need to reinstall it.
 
-b. If you would like to use `opencv-python-headless` instead of `opencv
--python`,
-you can install it before installing MMCV.
+b. If you would like to use `opencv-python-headless` instead of `opencv -python`, you can install it before installing
+MMCV.
 
-c. Some dependencies are optional. Simply running `pip install -v -e .` will
- only install the minimum runtime requirements. To use optional dependencies like `albumentations` and `imagecorruptions` either install them manually with `pip install -r requirements/optional.txt` or specify desired extras when calling `pip` (e.g. `pip install -v -e .[optional]`). Valid keys for the extras field are: `all`, `tests`, `build`, and `optional`.
+c. Some dependencies are optional. Simply running `pip install -v -e .` will only install the minimum runtime
+requirements. To use optional dependencies like `albumentations` and `imagecorruptions` either install them manually
+with `pip install -r requirements/optional.txt` or specify desired extras when calling `pip` (
+e.g. `pip install -v -e .[optional]`). Valid keys for the extras field are: `all`, `tests`, `build`, and `optional`.
 
 ### Install with CPU only
 
 The code can be built for CPU only environment (where CUDA isn't available).
 
-In CPU mode you can run the demo/webcam_demo.py for example.
-However some functionality is gone in this mode:
+In CPU mode you can run the demo/webcam_demo.py for example. However some functionality is gone in this mode:
 
 - Deformable Convolution
 - Modulated Deformable Convolution
@@ -130,7 +131,8 @@ However some functionality is gone in this mode:
 - sigmoid_focal_loss_cuda
 - bbox_overlaps
 
-So if you try to run inference with a model containing above ops you will get an error. The following table lists the related methods that cannot inference on CPU due to dependency on these operators
+So if you try to run inference with a model containing above ops you will get an error. The following table lists the
+related methods that cannot inference on CPU due to dependency on these operators
 
 |                        Operator                         |                            Model                             |
 | :-----------------------------------------------------: | :----------------------------------------------------------: |
@@ -143,7 +145,8 @@ So if you try to run inference with a model containing above ops you will get an
 
 ### Another option: Docker Image
 
-We provide a [Dockerfile](https://github.com/open-mmlab/mmdetection/blob/master/docker/Dockerfile) to build an image. Ensure that you are using [docker version](https://docs.docker.com/engine/install/) >=19.03.
+We provide a [Dockerfile](https://github.com/open-mmlab/mmdetection/blob/master/docker/Dockerfile) to build an image.
+Ensure that you are using [docker version](https://docs.docker.com/engine/install/) >=19.03.
 
 ```shell
 # build an image with PyTorch 1.6, CUDA 10.1
@@ -178,9 +181,11 @@ pip install -v -e .
 
 ### Developing with multiple MMDetection versions
 
-The train and test scripts already modify the `PYTHONPATH` to ensure the script use the MMDetection in the current directory.
+The train and test scripts already modify the `PYTHONPATH` to ensure the script use the MMDetection in the current
+directory.
 
-To use the default MMDetection installed in the environment rather than that you are working with, you can remove the following line in those scripts
+To use the default MMDetection installed in the environment rather than that you are working with, you can remove the
+following line in those scripts
 
 ```shell
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH
@@ -188,7 +193,8 @@ PYTHONPATH="$(dirname $0)/..":$PYTHONPATH
 
 ## Verification
 
-To verify whether MMDetection and the required environment are installed correctly, we can run sample Python code to initialize a detector and run inference a demo image:
+To verify whether MMDetection and the required environment are installed correctly, we can run sample Python code to
+initialize a detector and run inference a demo image:
 
 ```python
 from mmdet.apis import init_detector, inference_detector

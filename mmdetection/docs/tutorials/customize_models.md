@@ -123,11 +123,12 @@ neck=dict(
 
 ### Add new heads
 
-Here we show how to develop a new head with the example of [Double Head R-CNN](https://arxiv.org/abs/1904.06493) as the following.
+Here we show how to develop a new head with the example of [Double Head R-CNN](https://arxiv.org/abs/1904.06493) as the
+following.
 
-First, add a new bbox head in `mmdet/models/roi_heads/bbox_heads/double_bbox_head.py`.
-Double Head R-CNN implements a new bbox head for object detection.
-To implement a bbox head, basically we need to implement three functions of the new module as the following.
+First, add a new bbox head in `mmdet/models/roi_heads/bbox_heads/double_bbox_head.py`. Double Head R-CNN implements a
+new bbox head for object detection. To implement a bbox head, basically we need to implement three functions of the new
+module as the following.
 
 ```python
 from mmdet.models.builder import HEADS
@@ -164,7 +165,8 @@ class DoubleConvFCBBoxHead(BBoxHead):
 
 ```
 
-Second, implement a new RoI Head if it is necessary. We plan to inherit the new `DoubleHeadRoIHead` from `StandardRoIHead`. We can find that a `StandardRoIHead` already implements the following functions.
+Second, implement a new RoI Head if it is necessary. We plan to inherit the new `DoubleHeadRoIHead`
+from `StandardRoIHead`. We can find that a `StandardRoIHead` already implements the following functions.
 
 ```python
 import torch
@@ -260,7 +262,8 @@ class DoubleHeadRoIHead(StandardRoIHead):
 ```
 
 Last, the users need to add the module in
-`mmdet/models/bbox_heads/__init__.py` and `mmdet/models/roi_heads/__init__.py` thus the corresponding registry could find and load them.
+`mmdet/models/bbox_heads/__init__.py` and `mmdet/models/roi_heads/__init__.py` thus the corresponding registry could
+find and load them.
 
 Alternatively, the users can add
 
@@ -306,9 +309,9 @@ The Double Head R-CNN mainly uses a new DoubleHeadRoIHead and a new
 
 ### Add new loss
 
-Assume you want to add a new loss as `MyLoss`, for bounding box regression.
-To add a new loss function, the users need implement it in `mmdet/models/losses/my_loss.py`.
-The decorator `weighted_loss` enable the loss to be weighted for each element.
+Assume you want to add a new loss as `MyLoss`, for bounding box regression. To add a new loss function, the users need
+implement it in `mmdet/models/losses/my_loss.py`. The decorator `weighted_loss` enable the loss to be weighted for each
+element.
 
 ```python
 import torch
@@ -361,8 +364,8 @@ custom_imports=dict(
 
 to the config file and achieve the same goal.
 
-To use it, modify the `loss_xxx` field.
-Since MyLoss is for regression, you need to modify the `loss_bbox` field in the head.
+To use it, modify the `loss_xxx` field. Since MyLoss is for regression, you need to modify the `loss_bbox` field in the
+head.
 
 ```python
 loss_bbox=dict(type='MyLoss', loss_weight=1.0))

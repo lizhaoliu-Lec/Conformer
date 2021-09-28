@@ -134,7 +134,7 @@ class CascadeRoIHead(BaseRoIHead, BBoxTestMixin, MaskTestMixin):
             mask_rois = rois[:100]
             for i in range(self.num_stages):
                 mask_results = self._mask_forward(i, x, mask_rois)
-                outs = outs + (mask_results['mask_pred'], )
+                outs = outs + (mask_results['mask_pred'],)
         return outs
 
     def _bbox_forward(self, stage, x, rois):

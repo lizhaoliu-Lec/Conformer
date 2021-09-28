@@ -28,8 +28,8 @@ class ResLayer(nn.Module):
         self.fp16_enabled = False
         block, stage_blocks = ResNet.arch_settings[depth]
         stage_block = stage_blocks[stage]
-        planes = 64 * 2**stage
-        inplanes = 64 * 2**(stage - 1) * block.expansion
+        planes = 64 * 2 ** stage
+        inplanes = 64 * 2 ** (stage - 1) * block.expansion
 
         res_layer = _ResLayer(
             block,

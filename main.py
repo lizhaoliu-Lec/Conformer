@@ -21,6 +21,7 @@ from samplers import RASampler
 import utils
 import models
 
+
 # from fvcore.nn import FlopCountAnalysis
 
 def get_args_parser():
@@ -354,9 +355,9 @@ def main(args):
             print(f'Max accuracy: {max_accuracy:.2f}%')
 
             log_stats = {**{f'train_{k}': v for k, v in train_stats.items()},
-                            **{f'test_{k}': v for k, v in test_stats.items()},
-                            'epoch': epoch,
-                            'n_parameters': n_parameters}
+                         **{f'test_{k}': v for k, v in test_stats.items()},
+                         'epoch': epoch,
+                         'n_parameters': n_parameters}
 
             if args.output_dir and utils.is_main_process():
                 with (output_dir / "log.txt").open("a") as f:

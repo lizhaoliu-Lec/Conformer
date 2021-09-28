@@ -67,7 +67,7 @@ def check_shear(results, results_sheared):
 def test_shear():
     # test assertion for invalid type of max_shear_magnitude
     with pytest.raises(AssertionError):
-        transform = dict(type='Shear', level=1, max_shear_magnitude=(0.5, ))
+        transform = dict(type='Shear', level=1, max_shear_magnitude=(0.5,))
         build_from_cfg(transform, PIPELINES)
 
     # test assertion for invalid value of max_shear_magnitude
@@ -171,7 +171,7 @@ def test_shear():
     img_s = np.stack([img_s, img_s, img_s], axis=-1)
     results_gt['img'] = img_s
     results_gt['gt_bboxes'] = np.empty((0, 4), dtype=np.float32)
-    results_gt['gt_labels'] = np.empty((0, ), dtype=np.int64)
+    results_gt['gt_labels'] = np.empty((0,), dtype=np.int64)
     results_gt['gt_bboxes_ignore'] = np.empty((0, 4), dtype=np.float32)
     gt_masks = np.array([[0, 1, 0, 0], [0, 0, 0, 0]],
                         dtype=np.uint8)[None, :, :]

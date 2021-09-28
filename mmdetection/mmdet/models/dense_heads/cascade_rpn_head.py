@@ -248,15 +248,15 @@ class StageCascadeRPNHead(RPNHead):
             gt_labels_list = [None for _ in range(num_imgs)]
         (all_labels, all_label_weights, all_bbox_targets, all_bbox_weights,
          pos_inds_list, neg_inds_list) = multi_apply(
-             self._region_targets_single,
-             anchor_list,
-             valid_flag_list,
-             gt_bboxes_list,
-             gt_bboxes_ignore_list,
-             gt_labels_list,
-             img_metas,
-             featmap_sizes=featmap_sizes,
-             label_channels=label_channels)
+            self._region_targets_single,
+            anchor_list,
+            valid_flag_list,
+            gt_bboxes_list,
+            gt_bboxes_ignore_list,
+            gt_labels_list,
+            img_metas,
+            featmap_sizes=featmap_sizes,
+            label_channels=label_channels)
         # no valid anchors
         if any([labels is None for labels in all_labels]):
             return None

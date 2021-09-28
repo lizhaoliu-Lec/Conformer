@@ -7,17 +7,17 @@ model = dict(
     type='MaskRCNN',
     pretrained=None,
     backbone=dict(
-            type='Conformer',
-            embed_dim=384,
-            depth=12,
-            patch_size=32,
-            channel_ratio=4,
-            num_heads=6,
-            mlp_ratio=4,
-            qkv_bias=True,
-            norm_eval=True,
-            frozen_stages=1
-        ),
+        type='Conformer',
+        embed_dim=384,
+        depth=12,
+        patch_size=32,
+        channel_ratio=4,
+        num_heads=6,
+        mlp_ratio=4,
+        qkv_bias=True,
+        norm_eval=True,
+        frozen_stages=1
+    ),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 1024],
@@ -129,7 +129,6 @@ model = dict(
             nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100,
             mask_thr_binary=0.5)))
-
 
 dataset_type = 'CocoDataset'
 data_root = 'data/coco/'

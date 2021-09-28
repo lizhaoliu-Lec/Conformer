@@ -169,7 +169,7 @@ class YOLOV3Head(BaseDenseHead, BBoxTestMixin):
 
         return tuple(pred_maps),
 
-    @force_fp32(apply_to=('pred_maps', ))
+    @force_fp32(apply_to=('pred_maps',))
     def get_bboxes(self,
                    pred_maps,
                    img_metas,
@@ -298,7 +298,7 @@ class YOLOV3Head(BaseDenseHead, BBoxTestMixin):
         multi_lvl_conf_scores = torch.cat(multi_lvl_conf_scores)
 
         if with_nms and (multi_lvl_conf_scores.size(0) == 0):
-            return torch.zeros((0, 5)), torch.zeros((0, ))
+            return torch.zeros((0, 5)), torch.zeros((0,))
 
         if rescale:
             multi_lvl_bboxes /= multi_lvl_bboxes.new_tensor(scale_factor)
@@ -324,7 +324,7 @@ class YOLOV3Head(BaseDenseHead, BBoxTestMixin):
             return (multi_lvl_bboxes, multi_lvl_cls_scores,
                     multi_lvl_conf_scores)
 
-    @force_fp32(apply_to=('pred_maps', ))
+    @force_fp32(apply_to=('pred_maps',))
     def loss(self,
              pred_maps,
              gt_bboxes,
@@ -506,7 +506,7 @@ class YOLOV3Head(BaseDenseHead, BBoxTestMixin):
             gt_labels, num_classes=self.num_classes).float()
         if self.one_hot_smoother != 0:  # label smooth
             gt_labels_one_hot = gt_labels_one_hot * (
-                1 - self.one_hot_smoother
+                    1 - self.one_hot_smoother
             ) + self.one_hot_smoother / self.num_classes
         target_map[sampling_result.pos_inds, 5:] = gt_labels_one_hot[
             sampling_result.pos_assigned_gt_inds]

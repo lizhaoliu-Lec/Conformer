@@ -1,6 +1,8 @@
 # 2: Train with customized datasets
 
-In this note, you will know how to inference, test, and train predefined models with customized datasets. We use the [ballon dataset](https://github.com/matterport/Mask_RCNN/tree/master/samples/balloon) as an example to describe the whole process.
+In this note, you will know how to inference, test, and train predefined models with customized datasets. We use
+the [ballon dataset](https://github.com/matterport/Mask_RCNN/tree/master/samples/balloon) as an example to describe the
+whole process.
 
 The basic steps are as below:
 
@@ -20,12 +22,13 @@ Usually we recommend to use the first two methods which are usually easier than 
 
 In this note, we give an example for converting the data into COCO format.
 
-**Note**: MMDetection only supports evaluating mask AP of dataset in COCO format for now.
-So for instance segmentation task users should convert the data into coco format.
+**Note**: MMDetection only supports evaluating mask AP of dataset in COCO format for now. So for instance segmentation
+task users should convert the data into coco format.
 
 ### COCO annotation format
 
-The necessary keys of COCO format for instance segmentation is as below, for the complete details, please refer [here](https://cocodataset.org/#format-data).
+The necessary keys of COCO format for instance segmentation is as below, for the complete details, please
+refer [here](https://cocodataset.org/#format-data).
 
 ```json
 {
@@ -59,8 +62,9 @@ categories = [{
 }]
 ```
 
-Assume we use the ballon dataset.
-After downloading the data, we need to implement a function to convert the annotation format into the COCO format. Then we can use implemented COCODataset to load the data and perform training and evaluation.
+Assume we use the ballon dataset. After downloading the data, we need to implement a function to convert the annotation
+format into the COCO format. Then we can use implemented COCODataset to load the data and perform training and
+evaluation.
 
 If you take a look at the dataset, you will find the dataset format is as below:
 
@@ -148,8 +152,8 @@ If you take a look at the dataset, you will find the dataset format is as below:
  'size': 1115004}
 ```
 
-The annotation is a JSON file where each key indicates an image's all annotations.
-The code to convert the ballon dataset into coco format is as below.
+The annotation is a JSON file where each key indicates an image's all annotations. The code to convert the ballon
+dataset into coco format is as below.
 
 ```python
 import os.path as osp
@@ -205,11 +209,14 @@ def convert_balloon_to_coco(ann_file, out_file, image_prefix):
 
 ```
 
-Using the function above, users can successfully convert the annotation file into json format, then we can use `CocoDataset` to train and evaluate the model.
+Using the function above, users can successfully convert the annotation file into json format, then we can
+use `CocoDataset` to train and evaluate the model.
 
 ## Prepare a config
 
-The second step is to prepare a config thus the dataset could be successfully loaded. Assume that we want to use Mask R-CNN with FPN, the config to train the detector on ballon dataset is as below. Assume the config is under directory `configs/ballon/` and named as `mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_balloon.py`, the config is as below.
+The second step is to prepare a config thus the dataset could be successfully loaded. Assume that we want to use Mask
+R-CNN with FPN, the config to train the detector on ballon dataset is as below. Assume the config is under
+directory `configs/ballon/` and named as `mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_balloon.py`, the config is as below.
 
 ```python
 # The new config inherits a base config to highlight the necessary modification

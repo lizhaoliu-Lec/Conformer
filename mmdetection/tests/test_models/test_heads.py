@@ -278,7 +278,7 @@ def test_anchor_head_loss():
 
     # Anchor head expects a multiple levels of features per image
     feat = [
-        torch.rand(1, 1, s // (2**(i + 2)), s // (2**(i + 2)))
+        torch.rand(1, 1, s // (2 ** (i + 2)), s // (2 ** (i + 2)))
         for i in range(len(self.anchor_generator.strides))
     ]
     cls_scores, bbox_preds = self.forward(feat)
@@ -355,7 +355,7 @@ def test_fsaf_head_loss():
         head.cuda()
         # FSAF head expects a multiple levels of features per image
         feat = [
-            torch.rand(1, 1, s // (2**(i + 2)), s // (2**(i + 2))).cuda()
+            torch.rand(1, 1, s // (2 ** (i + 2)), s // (2 ** (i + 2))).cuda()
             for i in range(len(head.anchor_generator.strides))
         ]
         cls_scores, bbox_preds = head.forward(feat)
@@ -436,7 +436,7 @@ def test_ga_anchor_head_loss():
     if torch.cuda.is_available():
         head.cuda()
         feat = [
-            torch.rand(1, 4, s // (2**(i + 2)), s // (2**(i + 2))).cuda()
+            torch.rand(1, 4, s // (2 ** (i + 2)), s // (2 ** (i + 2))).cuda()
             for i in range(len(head.approx_anchor_generator.base_anchors))
         ]
         cls_scores, bbox_preds, shape_preds, loc_preds = head.forward(feat)
@@ -634,7 +634,7 @@ def test_sabl_retina_head_loss():
         head.cuda()
         # Anchor head expects a multiple levels of features per image
         feat = [
-            torch.rand(1, 3, s // (2**(i + 2)), s // (2**(i + 2))).cuda()
+            torch.rand(1, 3, s // (2 ** (i + 2)), s // (2 ** (i + 2))).cuda()
             for i in range(len(head.approx_anchor_generator.base_anchors))
         ]
         cls_scores, bbox_preds = head.forward(feat)
@@ -815,14 +815,14 @@ def _demodata_refine_boxes(n_roi, n_img, rng=0):
     roi_boxes = random_boxes(n_roi, scale=scale, rng=rng)
     if n_img == 0:
         assert n_roi == 0, 'cannot have any rois if there are no images'
-        img_ids = torch.empty((0, ), dtype=torch.long)
+        img_ids = torch.empty((0,), dtype=torch.long)
         roi_boxes = torch.empty((0, 4), dtype=torch.float32)
     else:
-        img_ids = rng.randint(0, n_img, (n_roi, ))
+        img_ids = rng.randint(0, n_img, (n_roi,))
         img_ids = torch.from_numpy(img_ids)
     rois = torch.cat([img_ids[:, None].float(), roi_boxes], dim=1)
     # Create other args
-    labels = rng.randint(0, 2, (n_roi, ))
+    labels = rng.randint(0, 2, (n_roi,))
     labels = torch.from_numpy(labels).long()
     bbox_preds = random_boxes(n_roi, scale=scale, rng=rng)
     # For each image, pretend random positive boxes are gts
@@ -831,7 +831,7 @@ def _demodata_refine_boxes(n_roi, n_img, rng=0):
     pos_per_img = [sum(lbl_per_img.get(gid, [])) for gid in range(n_img)]
     # randomly generate with numpy then sort with torch
     _pos_is_gts = [
-        rng.randint(0, 2, (npos, )).astype(np.uint8) for npos in pos_per_img
+        rng.randint(0, 2, (npos,)).astype(np.uint8) for npos in pos_per_img
     ]
     pos_is_gts = [
         torch.from_numpy(p).sort(descending=True)[0] for p in _pos_is_gts
@@ -1004,13 +1004,13 @@ def test_corner_head_loss():
     gt_bboxes_ind = (gt_bboxes[0] // 4).int().tolist()
     for tl_emb_feat, br_emb_feat in zip(tl_embs, br_embs):
         tl_emb_feat[:, :, gt_bboxes_ind[0][1],
-                    gt_bboxes_ind[0][0]] = tl_emb_feat[:, :,
-                                                       gt_bboxes_ind[1][1],
-                                                       gt_bboxes_ind[1][0]]
+        gt_bboxes_ind[0][0]] = tl_emb_feat[:, :,
+                               gt_bboxes_ind[1][1],
+                               gt_bboxes_ind[1][0]]
         br_emb_feat[:, :, gt_bboxes_ind[0][3],
-                    gt_bboxes_ind[0][2]] = br_emb_feat[:, :,
-                                                       gt_bboxes_ind[1][3],
-                                                       gt_bboxes_ind[1][2]]
+        gt_bboxes_ind[0][2]] = br_emb_feat[:, :,
+                               gt_bboxes_ind[1][3],
+                               gt_bboxes_ind[1][2]]
 
     two_gt_losses = self.loss(tl_heats, br_heats, tl_embs, br_embs, tl_offs,
                               br_offs, gt_bboxes, gt_labels, img_metas,

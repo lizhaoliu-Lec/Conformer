@@ -10,13 +10,16 @@ from timm.models.resnet import resnet26d, resnet50d, resnet26, resnet50
 from timm.models.registry import register_model
 
 import logging
+
 _logger = logging.getLogger(__name__)
 
 from torchvision.ops import roi_align
 import math
+
 _DEFAULT_SCALE_CLAMP = math.log(100000.0 / 16)
 
 import pdb
+
 
 def _cfg(url='', **kwargs):
     return {
@@ -74,10 +77,12 @@ default_cfgs = {
     # hybrid models (weights ported from official Google JAX impl)
     'vit_base_resnet50_224_in21k': _cfg(
         url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_resnet50_224_in21k-6f7c7740.pth',
-        num_classes=21843, mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5), crop_pct=0.9, first_conv='patch_embed.backbone.stem.conv'),
+        num_classes=21843, mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5), crop_pct=0.9,
+        first_conv='patch_embed.backbone.stem.conv'),
     'vit_base_resnet50_384': _cfg(
         url='https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_resnet50_384-9fd3c705.pth',
-        input_size=(3, 384, 384), mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5), crop_pct=1.0, first_conv='patch_embed.backbone.stem.conv'),
+        input_size=(3, 384, 384), mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5), crop_pct=1.0,
+        first_conv='patch_embed.backbone.stem.conv'),
 
     # hybrid models (my experiments)
     'vit_small_resnet26d_224': _cfg(),
@@ -157,6 +162,7 @@ class Block(nn.Module):
 class PatchEmbed(nn.Module):
     """ Image to Patch Embedding
     """
+
     def __init__(self, img_size=224, patch_size=16, in_chans=3, embed_dim=768):
         super().__init__()
         img_size = to_2tuple(img_size)
@@ -181,6 +187,7 @@ class HybridEmbed(nn.Module):
     """ CNN Feature Map Embedding
     Extract feature map from CNN, flatten, project to embedding dim.
     """
+
     def __init__(self, backbone, img_size=224, feature_size=None, in_chans=3, embed_dim=768):
         super().__init__()
         assert isinstance(backbone, nn.Module)
@@ -221,6 +228,7 @@ class HybridEmbed(nn.Module):
 class VisionTransformer(nn.Module):
     """ Vision Transformer with support for patch or hybrid CNN input stage
     """
+
     def __init__(self, img_size=224, patch_size=16, in_chans=3, num_classes=1000, embed_dim=768, depth=12,
                  num_heads=12, mlp_ratio=4., qkv_bias=True, qk_scale=None, drop_rate=0., attn_drop_rate=0.,
                  drop_path_rate=0., hybrid_backbone=None, norm_layer=nn.LayerNorm):
@@ -251,8 +259,8 @@ class VisionTransformer(nn.Module):
         self.norm = norm_layer(embed_dim)
 
         # NOTE as per official impl, we could have a pre-logits representation dense layer + tanh here
-        #self.repr = nn.Linear(embed_dim, representation_size)
-        #self.repr_act = nn.Tanh()
+        # self.repr = nn.Linear(embed_dim, representation_size)
+        # self.repr_act = nn.Tanh()
 
         # Classifier head
         self.head = nn.Linear(embed_dim, num_classes) if num_classes > 0 else nn.Identity()
@@ -355,7 +363,7 @@ def _create_vision_transformer(variant, pretrained=False, distilled=False, **kwa
         repr_size = None
 
     # model_cls = DistilledVisionTransformer if distilled else VisionTransformer
-    model_cls =  VisionTransformer
+    model_cls = VisionTransformer
     # model = model_cls(img_size=img_size, num_classes=num_classes, representation_size=repr_size, **kwargs)
     model = model_cls(img_size=img_size, num_classes=num_classes, **kwargs)
     model.default_cfg = default_cfg
@@ -593,11 +601,12 @@ def vit_deit_tiny_patch16_224(pretrained=False, **kwargs):
     model = _create_vision_transformer('vit_deit_tiny_patch16_224', pretrained=pretrained, **model_kwargs)
     return model
 
+
 @register_model
 def deit_small_resnet50_224(pretrained=False, **kwargs):
     pretrained_backbone = kwargs.get('pretrained_backbone', False)  # default to True for now, for testing
     backbone = resnet50(pretrained=pretrained_backbone, features_only=True, out_indices=[4])
     model = VisionTransformer(patch_size=16, embed_dim=384, depth=12, num_heads=6, mlp_ratio=4, qkv_bias=True,
-        norm_layer=partial(nn.LayerNorm, eps=1e-6), hybrid_backbone=backbone, **kwargs)
+                              norm_layer=partial(nn.LayerNorm, eps=1e-6), hybrid_backbone=backbone, **kwargs)
     model.default_cfg = default_cfgs['vit_small_resnet50_224']
     return model

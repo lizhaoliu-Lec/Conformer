@@ -1,41 +1,49 @@
 # Tutorial 1: Learn about Configs
 
-We incorporate modular and inheritance design into our config system, which is convenient to conduct various experiments.
-If you wish to inspect the config file, you may run `python tools/misc/print_config.py /PATH/TO/CONFIG` to see the complete config.
+We incorporate modular and inheritance design into our config system, which is convenient to conduct various
+experiments. If you wish to inspect the config file, you may run `python tools/misc/print_config.py /PATH/TO/CONFIG` to
+see the complete config.
 
 ## Modify config through script arguments
 
-When submitting jobs using "tools/train.py" or "tools/test.py", you may specify `--cfg-options` to in-place modify the config.
+When submitting jobs using "tools/train.py" or "tools/test.py", you may specify `--cfg-options` to in-place modify the
+config.
 
 - Update config keys of dict chains.
 
-  The config options can be specified following the order of the dict keys in the original config.
-  For example, `--cfg-options model.backbone.norm_eval=False` changes the all BN modules in model backbones to `train` mode.
+  The config options can be specified following the order of the dict keys in the original config. For
+  example, `--cfg-options model.backbone.norm_eval=False` changes the all BN modules in model backbones to `train` mode.
 
 - Update keys inside a list of configs.
 
-  Some config dicts are composed as a list in your config. For example, the training pipeline `data.train.pipeline` is normally a list
-  e.g. `[dict(type='LoadImageFromFile'), ...]`. If you want to change `'LoadImageFromFile'` to `'LoadImageFromWebcam'` in the pipeline,
-  you may specify `--cfg-options data.train.pipeline.0.type=LoadImageFromWebcam`.
+  Some config dicts are composed as a list in your config. For example, the training pipeline `data.train.pipeline` is
+  normally a list e.g. `[dict(type='LoadImageFromFile'), ...]`. If you want to change `'LoadImageFromFile'`
+  to `'LoadImageFromWebcam'` in the pipeline, you may
+  specify `--cfg-options data.train.pipeline.0.type=LoadImageFromWebcam`.
 
 - Update values of list/tuples.
 
-  If the value to be updated is a list or a tuple. For example, the config file normally sets `workflow=[('train', 1)]`. If you want to
-  change this key, you may specify `--cfg-options workflow="[(train,1),(val,1)]"`. Note that the quotation mark \" is necessary to
-  support list/tuple data types, and that **NO** white space is allowed inside the quotation marks in the specified value.
+  If the value to be updated is a list or a tuple. For example, the config file normally sets `workflow=[('train', 1)]`.
+  If you want to change this key, you may specify `--cfg-options workflow="[(train,1),(val,1)]"`. Note that the
+  quotation mark \" is necessary to support list/tuple data types, and that **NO** white space is allowed inside the
+  quotation marks in the specified value.
 
 ## Config File Structure
 
-There are 4 basic component types under `config/_base_`, dataset, model, schedule, default_runtime.
-Many methods could be easily constructed with one of each like Faster R-CNN, Mask R-CNN, Cascade R-CNN, RPN, SSD.
-The configs that are composed by components from `_base_` are called _primitive_.
+There are 4 basic component types under `config/_base_`, dataset, model, schedule, default_runtime. Many methods could
+be easily constructed with one of each like Faster R-CNN, Mask R-CNN, Cascade R-CNN, RPN, SSD. The configs that are
+composed by components from `_base_` are called _primitive_.
 
-For all configs under the same folder, it is recommended to have only **one** _primitive_ config. All other configs should inherit from the _primitive_ config. In this way, the maximum of inheritance level is 3.
+For all configs under the same folder, it is recommended to have only **one** _primitive_ config. All other configs
+should inherit from the _primitive_ config. In this way, the maximum of inheritance level is 3.
 
-For easy understanding, we recommend contributors to inherit from exiting methods.
-For example, if some modification is made base on Faster R-CNN, user may first inherit the basic Faster R-CNN structure by specifying `_base_ = ../faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py`, then modify the necessary fields in the config files.
+For easy understanding, we recommend contributors to inherit from exiting methods. For example, if some modification is
+made base on Faster R-CNN, user may first inherit the basic Faster R-CNN structure by
+specifying `_base_ = ../faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py`, then modify the necessary fields in the config
+files.
 
-If you are building an entirely new method that does not share the structure with any of the existing methods, you may create a folder `xxx_rcnn` under `configs`,
+If you are building an entirely new method that does not share the structure with any of the existing methods, you may
+create a folder `xxx_rcnn` under `configs`,
 
 Please refer to [mmcv](https://mmcv.readthedocs.io/en/latest/utils.html#config) for detailed documentation.
 
@@ -53,20 +61,23 @@ We follow the below style to name config files. Contributors are advised to foll
 - `[model setting]`: specific setting for some model, like `without_semantic` for `htc`, `moment` for `reppoints`, etc.
 - `{backbone}`: backbone type like `r50` (ResNet-50), `x101` (ResNeXt-101).
 - `{neck}`: neck type like `fpn`, `pafpn`, `nasfpn`, `c4`.
-- `[norm_setting]`: `bn` (Batch Normalization) is used unless specified, other norm layer type could be `gn` (Group Normalization), `syncbn` (Synchronized Batch Normalization).
-    `gn-head`/`gn-neck` indicates GN is applied in head/neck only, while `gn-all` means GN is applied in the entire model, e.g. backbone, neck, head.
+- `[norm_setting]`: `bn` (Batch Normalization) is used unless specified, other norm layer type could be `gn` (Group
+  Normalization), `syncbn` (Synchronized Batch Normalization).
+  `gn-head`/`gn-neck` indicates GN is applied in head/neck only, while `gn-all` means GN is applied in the entire model,
+  e.g. backbone, neck, head.
 - `[misc]`: miscellaneous setting/plugins of model, e.g. `dconv`, `gcb`, `attention`, `albu`, `mstrain`.
 - `[gpu x batch_per_gpu]`: GPUs and samples per GPU, `8x2` is used by default.
 - `{schedule}`: training schedule, options are `1x`, `2x`, `20e`, etc.
-    `1x` and `2x` means 12 epochs and 24 epochs respectively.
-    `20e` is adopted in cascade models, which denotes 20 epochs.
-    For `1x`/`2x`, initial learning rate decays by a factor of 10 at the 8/16th and 11/22th epochs.
-    For `20e`, initial learning rate decays by a factor of 10 at the 16th and 19th epochs.
+  `1x` and `2x` means 12 epochs and 24 epochs respectively.
+  `20e` is adopted in cascade models, which denotes 20 epochs. For `1x`/`2x`, initial learning rate decays by a factor
+  of 10 at the 8/16th and 11/22th epochs. For `20e`, initial learning rate decays by a factor of 10 at the 16th and 19th
+  epochs.
 - `{dataset}`: dataset like `coco`, `cityscapes`, `voc_0712`, `wider_face`.
 
 ## Deprecated train_cfg/test_cfg
 
-The `train_cfg` and `test_cfg` are deprecated in config file, please specify them in the model config. The original config structure is as below.
+The `train_cfg` and `test_cfg` are deprecated in config file, please specify them in the model config. The original
+config structure is as below.
 
 ```python
 # deprecated
@@ -92,9 +103,9 @@ model = dict(
 
 ## An Example of Mask R-CNN
 
-To help the users have a basic idea of a complete config and the modules in a modern detection system,
-we make brief comments on the config of Mask R-CNN using ResNet50 and FPN as the following.
-For more detailed usage and the corresponding alternative for each modules, please refer to the API documentation.
+To help the users have a basic idea of a complete config and the modules in a modern detection system, we make brief
+comments on the config of Mask R-CNN using ResNet50 and FPN as the following. For more detailed usage and the
+corresponding alternative for each modules, please refer to the API documentation.
 
 ```python
 model = dict(
@@ -416,8 +427,9 @@ work_dir = 'work_dir'  # Directory to save the model checkpoints and logs for th
 
 ### Ignore some fields in the base configs
 
-Sometimes, you may set `_delete_=True` to ignore some of fields in base configs.
-You may refer to [mmcv](https://mmcv.readthedocs.io/en/latest/utils.html#inherit-from-base-config-with-ignored-fields) for simple inllustration.
+Sometimes, you may set `_delete_=True` to ignore some of fields in base configs. You may refer
+to [mmcv](https://mmcv.readthedocs.io/en/latest/utils.html#inherit-from-base-config-with-ignored-fields) for simple
+inllustration.
 
 In MMDetection, for example, to change the backbone of Mask R-CNN with the following config.
 
@@ -480,9 +492,10 @@ The `_delete_=True` would replace all old keys in `backbone` field with new keys
 
 ### Use intermediate variables in configs
 
-Some intermediate variables are used in the configs files, like `train_pipeline`/`test_pipeline` in datasets.
-It's worth noting that when modifying intermediate variables in the children configs, user need to pass the intermediate variables into corresponding fields again.
-For example, we would like to use multi scale strategy to train a Mask R-CNN. `train_pipeline`/`test_pipeline` are intermediate variable we would like modify.
+Some intermediate variables are used in the configs files, like `train_pipeline`/`test_pipeline` in datasets. It's worth
+noting that when modifying intermediate variables in the children configs, user need to pass the intermediate variables
+into corresponding fields again. For example, we would like to use multi scale strategy to train a Mask
+R-CNN. `train_pipeline`/`test_pipeline` are intermediate variable we would like modify.
 
 ```python
 _base_ = './mask_rcnn_r50_fpn_1x_coco.py'

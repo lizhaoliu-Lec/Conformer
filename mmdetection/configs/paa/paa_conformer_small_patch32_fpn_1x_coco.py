@@ -69,7 +69,6 @@ model = dict(
         nms=dict(type='nms', iou_threshold=0.6),
         max_per_img=100))
 
-
 dataset_type = 'CocoDataset'
 data_root = 'data/coco/'
 
@@ -139,4 +138,4 @@ total_epochs = 12
 
 # optimizer_config = dict(grad_clip=dict(max_norm=0.1, norm_type=2))
 
-find_unused_parameters=True
+find_unused_parameters = True

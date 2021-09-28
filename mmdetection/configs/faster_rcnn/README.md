@@ -44,7 +44,8 @@ We trained with R-50-FPN pytorch style backbone for 1x schedule.
 
 ## Pre-trained Models
 
-We also train some models with longer schedules and multi-scale training. The users could finetune them for downstream tasks.
+We also train some models with longer schedules and multi-scale training. The users could finetune them for downstream
+tasks.
 
 |    Backbone     |  Style  | Lr schd | Mem (GB) | Inf time (fps) | box AP | Config | Download |
 | :-------------: | :-----: | :-----: | :------: | :------------: | :----: | :------: | :--------: |

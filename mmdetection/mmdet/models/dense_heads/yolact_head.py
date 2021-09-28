@@ -507,7 +507,7 @@ class YOLACTSegmHead(nn.Module):
         """
         return self.segm_conv(x)
 
-    @force_fp32(apply_to=('segm_pred', ))
+    @force_fp32(apply_to=('segm_pred',))
     def loss(self, segm_pred, gt_masks, gt_labels):
         """Compute loss of the head.
 
@@ -687,8 +687,8 @@ class YOLACTProtonet(nn.Module):
             coeff_pred_list = []
             for coeff_pred_per_level in coeff_pred:
                 coeff_pred_per_level = \
-                    coeff_pred_per_level.permute(0, 2, 3, 1)\
-                    .reshape(num_imgs, -1, self.num_protos)
+                    coeff_pred_per_level.permute(0, 2, 3, 1) \
+                        .reshape(num_imgs, -1, self.num_protos)
                 coeff_pred_list.append(coeff_pred_per_level)
             coeff_pred = torch.cat(coeff_pred_list, dim=1)
 
@@ -725,7 +725,7 @@ class YOLACTProtonet(nn.Module):
             mask_pred_list.append(mask_pred)
         return mask_pred_list
 
-    @force_fp32(apply_to=('mask_pred', ))
+    @force_fp32(apply_to=('mask_pred',))
     def loss(self, mask_pred, gt_masks, gt_bboxes, img_meta, sampling_results):
         """Compute loss of the head.
 

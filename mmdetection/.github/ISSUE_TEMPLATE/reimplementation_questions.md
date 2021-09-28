@@ -1,9 +1,6 @@
 ---
-name: Reimplementation Questions
-about: Ask about questions during model reimplementation
-title: ''
-labels: 'reimplementation'
-assignees: ''
+name: Reimplementation Questions about: Ask about questions during model reimplementation title: ''
+labels: 'reimplementation' assignees: ''
 
 ---
 
@@ -19,8 +16,12 @@ There are several common situations in the reimplementation issues as below
 There are several things to do for different cases as below.
 
 - For case 1 & 3, please follow the steps in the following sections thus we could help to quick identify the issue.
-- For case 2 & 4, please understand that we are not able to do much help here because we usually do not know the full code and the users should be responsible to the code they write.
-- One suggestion for case 2 & 4 is that the users should first check whether the bug lies in the self-implemented code or the original code. For example, users can first make sure that the same model runs well on supported datasets. If you still need help, please describe what you have done and what you obtain in the issue, and follow the steps in the following sections and try as clear as possible so that we can better help you.
+- For case 2 & 4, please understand that we are not able to do much help here because we usually do not know the full
+  code and the users should be responsible to the code they write.
+- One suggestion for case 2 & 4 is that the users should first check whether the bug lies in the self-implemented code
+  or the original code. For example, users can first make sure that the same model runs well on supported datasets. If
+  you still need help, please describe what you have done and what you obtain in the issue, and follow the steps in the
+  following sections and try as clear as possible so that we can better help you.
 
 **Checklist**
 
@@ -52,8 +53,8 @@ A placeholder for the config.
 
 1. Please run `python mmdet/utils/collect_env.py` to collect necessary environment information and paste it here.
 2. You may add addition that may be helpful for locating the problem, such as
-   1. How you installed PyTorch [e.g., pip, conda, source]
-   2. Other environment variables that may be related (such as `$PATH`, `$LD_LIBRARY_PATH`, `$PYTHONPATH`, etc.)
+    1. How you installed PyTorch [e.g., pip, conda, source]
+    2. Other environment variables that may be related (such as `$PATH`, `$LD_LIBRARY_PATH`, `$PYTHONPATH`, etc.)
 
 **Results**
 
@@ -65,4 +66,5 @@ A placeholder for results comparison
 
 **Issue fix**
 
-If you have already identified the reason, you can provide the information here. If you are willing to create a PR to fix it, please also leave a comment here and that would be much appreciated!
+If you have already identified the reason, you can provide the information here. If you are willing to create a PR to
+fix it, please also leave a comment here and that would be much appreciated!

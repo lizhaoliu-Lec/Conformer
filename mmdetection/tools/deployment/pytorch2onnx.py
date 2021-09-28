@@ -23,7 +23,6 @@ def pytorch2onnx(config_path,
                  dataset='coco',
                  test_img=None,
                  do_simplify=False):
-
     input_config = {
         'input_shape': input_shape,
         'input_path': input_img,

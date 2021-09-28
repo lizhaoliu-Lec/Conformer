@@ -305,8 +305,8 @@ def main():
 
             if args.out and rank == 0:
                 eval_results_filename = (
-                    osp.splitext(args.out)[0] + '_results' +
-                    osp.splitext(args.out)[1])
+                        osp.splitext(args.out)[0] + '_results' +
+                        osp.splitext(args.out)[1])
                 mmcv.dump(outputs, args.out)
                 eval_types = args.eval
                 if cfg.dataset_type == 'VOCDataset':

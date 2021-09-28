@@ -108,7 +108,7 @@ class PointRendRoIHead(StandardRoIHead):
             num_rois, channels, mask_height, mask_width = \
                 refined_mask_pred.shape
             if (self.test_cfg.subdivision_num_points >=
-                    self.test_cfg.scale_factor**2 * mask_height * mask_width
+                    self.test_cfg.scale_factor ** 2 * mask_height * mask_width
                     and
                     subdivision_step < self.test_cfg.subdivision_steps - 1):
                 continue

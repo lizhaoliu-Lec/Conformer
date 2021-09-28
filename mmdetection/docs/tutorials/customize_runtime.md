@@ -4,14 +4,17 @@
 
 ### Customize optimizer supported by Pytorch
 
-We already support to use all the optimizers implemented by PyTorch, and the only modification is to change the `optimizer` field of config files.
-For example, if you want to use `ADAM` (note that the performance could drop a lot), the modification could be as the following.
+We already support to use all the optimizers implemented by PyTorch, and the only modification is to change
+the `optimizer` field of config files. For example, if you want to use `ADAM` (note that the performance could drop a
+lot), the modification could be as the following.
 
 ```python
 optimizer = dict(type='Adam', lr=0.0003, weight_decay=0.0001)
 ```
 
-To modify the learning rate of the model, the users only need to modify the `lr` in the config of optimizer. The users can directly set arguments following the [API doc](https://pytorch.org/docs/stable/optim.html?highlight=optim#module-torch.optim) of PyTorch.
+To modify the learning rate of the model, the users only need to modify the `lr` in the config of optimizer. The users
+can directly set arguments following
+the [API doc](https://pytorch.org/docs/stable/optim.html?highlight=optim#module-torch.optim) of PyTorch.
 
 ### Customize self-implemented optimizer
 
@@ -19,9 +22,9 @@ To modify the learning rate of the model, the users only need to modify the `lr`
 
 A customized optimizer could be defined as following.
 
-Assume you want to add a optimizer named `MyOptimizer`, which has arguments `a`, `b`, and `c`.
-You need to create a new directory named `mmdet/core/optimizer`.
-And then implement the new optimizer in a file, e.g., in `mmdet/core/optimizer/my_optimizer.py`:
+Assume you want to add a optimizer named `MyOptimizer`, which has arguments `a`, `b`, and `c`. You need to create a new
+directory named `mmdet/core/optimizer`. And then implement the new optimizer in a file, e.g.,
+in `mmdet/core/optimizer/my_optimizer.py`:
 
 ```python
 from .registry import OPTIMIZERS
@@ -37,12 +40,13 @@ class MyOptimizer(Optimizer):
 
 #### 2. Add the optimizer to registry
 
-To find the above module defined above, this module should be imported into the main namespace at first. There are two options to achieve it.
+To find the above module defined above, this module should be imported into the main namespace at first. There are two
+options to achieve it.
 
 - Modify `mmdet/core/optimizer/__init__.py` to import it.
 
-    The newly defined module should be imported in `mmdet/core/optimizer/__init__.py` so that the registry will
-    find the new module and add it:
+  The newly defined module should be imported in `mmdet/core/optimizer/__init__.py` so that the registry will find the
+  new module and add it:
 
 ```python
 from .my_optimizer import MyOptimizer
@@ -54,16 +58,18 @@ from .my_optimizer import MyOptimizer
 custom_imports = dict(imports=['mmdet.core.optimizer.my_optimizer'], allow_failed_imports=False)
 ```
 
-The module `mmdet.core.optimizer.my_optimizer` will be imported at the beginning of the program and the class `MyOptimizer` is then automatically registered.
-Note that only the package containing the class `MyOptimizer` should be imported.
+The module `mmdet.core.optimizer.my_optimizer` will be imported at the beginning of the program and the
+class `MyOptimizer` is then automatically registered. Note that only the package containing the class `MyOptimizer`
+should be imported.
 `mmdet.core.optimizer.my_optimizer.MyOptimizer` **cannot** be imported directly.
 
-Actually users can use a totally different file directory structure using this importing method, as long as the module root can be located in `PYTHONPATH`.
+Actually users can use a totally different file directory structure using this importing method, as long as the module
+root can be located in `PYTHONPATH`.
 
 #### 3. Specify the optimizer in the config file
 
-Then you can use `MyOptimizer` in `optimizer` field of config files.
-In the configs, the optimizers are defined by the field `optimizer` like the following:
+Then you can use `MyOptimizer` in `optimizer` field of config files. In the configs, the optimizers are defined by the
+field `optimizer` like the following:
 
 ```python
 optimizer = dict(type='SGD', lr=0.02, momentum=0.9, weight_decay=0.0001)
@@ -77,8 +83,8 @@ optimizer = dict(type='MyOptimizer', a=a_value, b=b_value, c=c_value)
 
 ### Customize optimizer constructor
 
-Some models may have some parameter-specific settings for optimization, e.g. weight decay for BatchNorm layers.
-The users can do those fine-grained parameter tuning through customizing optimizer constructor.
+Some models may have some parameter-specific settings for optimization, e.g. weight decay for BatchNorm layers. The
+users can do those fine-grained parameter tuning through customizing optimizer constructor.
 
 ```python
 from mmcv.utils import build_from_cfg
@@ -99,26 +105,35 @@ class MyOptimizerConstructor(object):
 
 ```
 
-The default optimizer constructor is implemented [here](https://github.com/open-mmlab/mmcv/blob/9ecd6b0d5ff9d2172c49a182eaa669e9f27bb8e7/mmcv/runner/optimizer/default_constructor.py#L11), which could also serve as a template for new optimizer constructor.
+The default optimizer constructor is
+implemented [here](https://github.com/open-mmlab/mmcv/blob/9ecd6b0d5ff9d2172c49a182eaa669e9f27bb8e7/mmcv/runner/optimizer/default_constructor.py#L11)
+, which could also serve as a template for new optimizer constructor.
 
 ### Additional settings
 
-Tricks not implemented by the optimizer should be implemented through optimizer constructor (e.g., set parameter-wise learning rates) or hooks. We list some common settings that could stabilize the training or accelerate the training. Feel free to create PR, issue for more settings.
+Tricks not implemented by the optimizer should be implemented through optimizer constructor (e.g., set parameter-wise
+learning rates) or hooks. We list some common settings that could stabilize the training or accelerate the training.
+Feel free to create PR, issue for more settings.
 
 - __Use gradient clip to stabilize training__:
-    Some models need gradient clip to clip the gradients to stabilize the training process. An example is as below:
+  Some models need gradient clip to clip the gradients to stabilize the training process. An example is as below:
 
     ```python
     optimizer_config = dict(
         _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
     ```
 
-    If your config inherits the base config which already sets the `optimizer_config`, you might need `_delete_=True` to overide the unnecessary settings. See the [config documenetation](https://mmdetection.readthedocs.io/en/latest/config.html) for more details.
+  If your config inherits the base config which already sets the `optimizer_config`, you might need `_delete_=True` to
+  overide the unnecessary settings. See
+  the [config documenetation](https://mmdetection.readthedocs.io/en/latest/config.html) for more details.
 
 - __Use momentum schedule to accelerate model convergence__:
-    We support momentum scheduler to modify model's momentum according to learning rate, which could make the model converge in a faster way.
-    Momentum scheduler is usually used with LR scheduler, for example, the following config is used in 3D detection to accelerate convergence.
-    For more details, please refer to the implementation of [CyclicLrUpdater](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/lr_updater.py#L327) and [CyclicMomentumUpdater](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/momentum_updater.py#L130).
+  We support momentum scheduler to modify model's momentum according to learning rate, which could make the model
+  converge in a faster way. Momentum scheduler is usually used with LR scheduler, for example, the following config is
+  used in 3D detection to accelerate convergence. For more details, please refer to the implementation
+  of [CyclicLrUpdater](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/lr_updater.py#L327)
+  and [CyclicMomentumUpdater](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/momentum_updater.py#L130)
+  .
 
     ```python
     lr_config = dict(
@@ -137,8 +152,11 @@ Tricks not implemented by the optimizer should be implemented through optimizer 
 
 ## Customize training schedules
 
-By default we use step learning rate with 1x schedule, this calls [`StepLRHook`](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/lr_updater.py#L153) in MMCV.
-We support many other learning rate schedule [here](https://github.com/open-mmlab/mmcv/blob/master/mmcv/runner/hooks/lr_updater.py), such as `CosineAnnealing` and `Poly` schedule. Here are some examples
+By default we use step learning rate with 1x schedule, this
+calls [`StepLRHook`](https://github.com/open-mmlab/mmcv/blob/f48241a65aebfe07db122e9db320c31b685dc674/mmcv/runner/hooks/lr_updater.py#L153)
+in MMCV. We support many other learning rate
+schedule [here](https://github.com/open-mmlab/mmcv/blob/master/mmcv/runner/hooks/lr_updater.py), such
+as `CosineAnnealing` and `Poly` schedule. Here are some examples
 
 - Poly schedule:
 
@@ -159,16 +177,14 @@ We support many other learning rate schedule [here](https://github.com/open-mmla
 
 ## Customize workflow
 
-Workflow is a list of (phase, epochs) to specify the running order and epochs.
-By default it is set to be
+Workflow is a list of (phase, epochs) to specify the running order and epochs. By default it is set to be
 
 ```python
 workflow = [('train', 1)]
 ```
 
-which means running 1 epoch for training.
-Sometimes user may want to check some metrics (e.g. loss, accuracy) about the model on the validate set.
-In such case, we can set the workflow as
+which means running 1 epoch for training. Sometimes user may want to check some metrics (e.g. loss, accuracy) about the
+model on the validate set. In such case, we can set the workflow as
 
 ```python
 [('train', 1), ('val', 1)]
@@ -179,8 +195,12 @@ so that 1 epoch for training and 1 epoch for validation will be run iteratively.
 **Note**:
 
 1. The parameters of model will not be updated during val epoch.
-2. Keyword `total_epochs` in the config only controls the number of training epochs and will not affect the validation workflow.
-3. Workflows `[('train', 1), ('val', 1)]` and `[('train', 1)]` will not change the behavior of `EvalHook` because `EvalHook` is called by `after_train_epoch` and validation workflow only affect hooks that are called through `after_val_epoch`. Therefore, the only difference between `[('train', 1), ('val', 1)]` and `[('train', 1)]` is that the runner will calculate losses on validation set after each training epoch.
+2. Keyword `total_epochs` in the config only controls the number of training epochs and will not affect the validation
+   workflow.
+3. Workflows `[('train', 1), ('val', 1)]` and `[('train', 1)]` will not change the behavior of `EvalHook`
+   because `EvalHook` is called by `after_train_epoch` and validation workflow only affect hooks that are called
+   through `after_val_epoch`. Therefore, the only difference between `[('train', 1), ('val', 1)]` and `[('train', 1)]`
+   is that the runner will calculate losses on validation set after each training epoch.
 
 ## Customize hooks
 
@@ -188,9 +208,11 @@ so that 1 epoch for training and 1 epoch for validation will be run iteratively.
 
 #### 1. Implement a new hook
 
-There are some occasions when the users might need to implement a new hook. MMDetection supports customized hooks in training (#3395) since v2.3.0. Thus the users could implement a hook directly in mmdet or their mmdet-based codebases and use the hook by only modifying the config in training.
-Before v2.3.0, the users need to modify the code to get the hook registered before training starts.
-Here we give an example of creating a new hook in mmdet and using it in training.
+There are some occasions when the users might need to implement a new hook. MMDetection supports customized hooks in
+training (#3395) since v2.3.0. Thus the users could implement a hook directly in mmdet or their mmdet-based codebases
+and use the hook by only modifying the config in training. Before v2.3.0, the users need to modify the code to get the
+hook registered before training starts. Here we give an example of creating a new hook in mmdet and using it in
+training.
 
 ```python
 from mmcv.runner import HOOKS, Hook
@@ -221,16 +243,18 @@ class MyHook(Hook):
         pass
 ```
 
-Depending on the functionality of the hook, the users need to specify what the hook will do at each stage of the training in `before_run`, `after_run`, `before_epoch`, `after_epoch`, `before_iter`, and `after_iter`.
+Depending on the functionality of the hook, the users need to specify what the hook will do at each stage of the
+training in `before_run`, `after_run`, `before_epoch`, `after_epoch`, `before_iter`, and `after_iter`.
 
 #### 2. Register the new hook
 
-Then we need to make `MyHook` imported. Assuming the file is in `mmdet/core/utils/my_hook.py` there are two ways to do that:
+Then we need to make `MyHook` imported. Assuming the file is in `mmdet/core/utils/my_hook.py` there are two ways to do
+that:
 
 - Modify `mmdet/core/utils/__init__.py` to import it.
 
-    The newly defined module should be imported in `mmdet/core/utils/__init__.py` so that the registry will
-    find the new module and add it:
+  The newly defined module should be imported in `mmdet/core/utils/__init__.py` so that the registry will find the new
+  module and add it:
 
 ```python
 from .my_hook import MyHook
@@ -281,24 +305,29 @@ There are some common hooks that are not registerd through `custom_hooks`, they 
 - optimizer_config
 - momentum_config
 
-In those hooks, only the logger hook has the `VERY_LOW` priority, others' priority are `NORMAL`.
-The above-mentioned tutorials already covers how to modify `optimizer_config`, `momentum_config`, and `lr_config`.
-Here we reveals how what we can do with `log_config`, `checkpoint_config`, and `evaluation`.
+In those hooks, only the logger hook has the `VERY_LOW` priority, others' priority are `NORMAL`. The above-mentioned
+tutorials already covers how to modify `optimizer_config`, `momentum_config`, and `lr_config`. Here we reveals how what
+we can do with `log_config`, `checkpoint_config`, and `evaluation`.
 
 #### Checkpoint config
 
-The MMCV runner will use `checkpoint_config` to initialize [`CheckpointHook`](https://github.com/open-mmlab/mmcv/blob/9ecd6b0d5ff9d2172c49a182eaa669e9f27bb8e7/mmcv/runner/hooks/checkpoint.py#L9).
+The MMCV runner will use `checkpoint_config` to
+initialize [`CheckpointHook`](https://github.com/open-mmlab/mmcv/blob/9ecd6b0d5ff9d2172c49a182eaa669e9f27bb8e7/mmcv/runner/hooks/checkpoint.py#L9)
+.
 
 ```python
 checkpoint_config = dict(interval=1)
 ```
 
-The users could set `max_keep_ckpts` to only save only small number of checkpoints or decide whether to store state dict of optimizer by `save_optimizer`. More details of the arguments are [here](https://mmcv.readthedocs.io/en/latest/api.html#mmcv.runner.CheckpointHook)
+The users could set `max_keep_ckpts` to only save only small number of checkpoints or decide whether to store state dict
+of optimizer by `save_optimizer`. More details of the arguments
+are [here](https://mmcv.readthedocs.io/en/latest/api.html#mmcv.runner.CheckpointHook)
 
 #### Log config
 
-The `log_config` wraps multiple logger hooks and enables to set intervals. Now MMCV supports `WandbLoggerHook`, `MlflowLoggerHook`, and `TensorboardLoggerHook`.
-The detail usages can be found in the [doc](https://mmcv.readthedocs.io/en/latest/api.html#mmcv.runner.LoggerHook).
+The `log_config` wraps multiple logger hooks and enables to set intervals. Now MMCV supports `WandbLoggerHook`
+, `MlflowLoggerHook`, and `TensorboardLoggerHook`. The detail usages can be found in
+the [doc](https://mmcv.readthedocs.io/en/latest/api.html#mmcv.runner.LoggerHook).
 
 ```python
 log_config = dict(
@@ -311,8 +340,9 @@ log_config = dict(
 
 #### Evaluation config
 
-The config of `evaluation` will be used to initialize the [`EvalHook`](https://github.com/open-mmlab/mmdetection/blob/7a404a2c000620d52156774a5025070d9e00d918/mmdet/core/evaluation/eval_hooks.py#L8).
-Except the key `interval`, other arguments such as `metric` will be passed to the `dataset.evaluate()`
+The config of `evaluation` will be used to initialize
+the [`EvalHook`](https://github.com/open-mmlab/mmdetection/blob/7a404a2c000620d52156774a5025070d9e00d918/mmdet/core/evaluation/eval_hooks.py#L8)
+. Except the key `interval`, other arguments such as `metric` will be passed to the `dataset.evaluate()`
 
 ```python
 evaluation = dict(interval=1, metric='bbox')

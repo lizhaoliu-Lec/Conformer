@@ -5,6 +5,7 @@ from functools import partial
 
 from timm.models.layers import DropPath, trunc_normal_
 
+
 class Mlp(nn.Module):
     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, drop=0.):
         super().__init__()
@@ -85,7 +86,8 @@ class ConvBlock(nn.Module):
         self.bn1 = norm_layer(med_planes)
         self.act1 = act_layer(inplace=True)
 
-        self.conv2 = nn.Conv2d(med_planes, med_planes, kernel_size=3, stride=stride, groups=groups, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(med_planes, med_planes, kernel_size=3, stride=stride, groups=groups, padding=1,
+                               bias=False)
         self.bn2 = norm_layer(med_planes)
         self.act2 = act_layer(inplace=True)
 
@@ -172,7 +174,7 @@ class FCUUp(nn.Module):
     """
 
     def __init__(self, inplanes, outplanes, up_stride, act_layer=nn.ReLU,
-                 norm_layer=partial(nn.BatchNorm2d, eps=1e-6),):
+                 norm_layer=partial(nn.BatchNorm2d, eps=1e-6), ):
         super(FCUUp, self).__init__()
 
         self.up_stride = up_stride
@@ -192,6 +194,7 @@ class FCUUp(nn.Module):
 class Med_ConvBlock(nn.Module):
     """ special case for Convblock with down sampling,
     """
+
     def __init__(self, inplanes, act_layer=nn.ReLU, groups=1, norm_layer=partial(nn.BatchNorm2d, eps=1e-6),
                  drop_block=None, drop_path=None):
 
@@ -258,10 +261,12 @@ class ConvTransBlock(nn.Module):
 
         super(ConvTransBlock, self).__init__()
         expansion = 4
-        self.cnn_block = ConvBlock(inplanes=inplanes, outplanes=outplanes, res_conv=res_conv, stride=stride, groups=groups)
+        self.cnn_block = ConvBlock(inplanes=inplanes, outplanes=outplanes, res_conv=res_conv, stride=stride,
+                                   groups=groups)
 
         if last_fusion:
-            self.fusion_block = ConvBlock(inplanes=outplanes, outplanes=outplanes, stride=2, res_conv=True, groups=groups)
+            self.fusion_block = ConvBlock(inplanes=outplanes, outplanes=outplanes, stride=2, res_conv=True,
+                                          groups=groups)
         else:
             self.fusion_block = ConvBlock(inplanes=outplanes, outplanes=outplanes, groups=groups)
 
@@ -344,31 +349,34 @@ class Conformer(nn.Module):
         fin_stage = depth // 3 + 1
         for i in range(init_stage, fin_stage):
             self.add_module('conv_trans_' + str(i),
-                    ConvTransBlock(
-                        stage_1_channel, stage_1_channel, False, 1, dw_stride=trans_dw_stride, embed_dim=embed_dim,
-                        num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, qk_scale=qk_scale,
-                        drop_rate=drop_rate, attn_drop_rate=attn_drop_rate, drop_path_rate=self.trans_dpr[i-1],
-                        num_med_block=num_med_block
-                    )
-            )
-
+                            ConvTransBlock(
+                                stage_1_channel, stage_1_channel, False, 1, dw_stride=trans_dw_stride,
+                                embed_dim=embed_dim,
+                                num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, qk_scale=qk_scale,
+                                drop_rate=drop_rate, attn_drop_rate=attn_drop_rate,
+                                drop_path_rate=self.trans_dpr[i - 1],
+                                num_med_block=num_med_block
+                            )
+                            )
 
         stage_2_channel = int(base_channel * channel_ratio * 2)
         # 5~8 stage
-        init_stage = fin_stage # 5
-        fin_stage = fin_stage + depth // 3 # 9
+        init_stage = fin_stage  # 5
+        fin_stage = fin_stage + depth // 3  # 9
         for i in range(init_stage, fin_stage):
             s = 2 if i == init_stage else 1
             in_channel = stage_1_channel if i == init_stage else stage_2_channel
             res_conv = True if i == init_stage else False
             self.add_module('conv_trans_' + str(i),
-                    ConvTransBlock(
-                        in_channel, stage_2_channel, res_conv, s, dw_stride=trans_dw_stride // 2, embed_dim=embed_dim,
-                        num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, qk_scale=qk_scale,
-                        drop_rate=drop_rate, attn_drop_rate=attn_drop_rate, drop_path_rate=self.trans_dpr[i-1],
-                        num_med_block=num_med_block
-                    )
-            )
+                            ConvTransBlock(
+                                in_channel, stage_2_channel, res_conv, s, dw_stride=trans_dw_stride // 2,
+                                embed_dim=embed_dim,
+                                num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, qk_scale=qk_scale,
+                                drop_rate=drop_rate, attn_drop_rate=attn_drop_rate,
+                                drop_path_rate=self.trans_dpr[i - 1],
+                                num_med_block=num_med_block
+                            )
+                            )
 
         stage_3_channel = int(base_channel * channel_ratio * 2 * 2)
         # 9~12 stage
@@ -380,13 +388,15 @@ class Conformer(nn.Module):
             res_conv = True if i == init_stage else False
             last_fusion = True if i == depth else False
             self.add_module('conv_trans_' + str(i),
-                    ConvTransBlock(
-                        in_channel, stage_3_channel, res_conv, s, dw_stride=trans_dw_stride // 4, embed_dim=embed_dim,
-                        num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, qk_scale=qk_scale,
-                        drop_rate=drop_rate, attn_drop_rate=attn_drop_rate, drop_path_rate=self.trans_dpr[i-1],
-                        num_med_block=num_med_block, last_fusion=last_fusion
-                    )
-            )
+                            ConvTransBlock(
+                                in_channel, stage_3_channel, res_conv, s, dw_stride=trans_dw_stride // 4,
+                                embed_dim=embed_dim,
+                                num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, qk_scale=qk_scale,
+                                drop_rate=drop_rate, attn_drop_rate=attn_drop_rate,
+                                drop_path_rate=self.trans_dpr[i - 1],
+                                num_med_block=num_med_block, last_fusion=last_fusion
+                            )
+                            )
         self.fin_stage = fin_stage
 
         trunc_normal_(self.cls_token, std=.02)
@@ -414,7 +424,6 @@ class Conformer(nn.Module):
     def no_weight_decay(self):
         return {'cls_token'}
 
-
     def forward(self, x):
         B = x.shape[0]
         cls_tokens = self.cls_token.expand(B, -1, -1)
@@ -429,7 +438,7 @@ class Conformer(nn.Module):
         x_t = self.trans_patch_conv(x_base).flatten(2).transpose(1, 2)
         x_t = torch.cat([cls_tokens, x_t], dim=1)
         x_t = self.trans_1(x_t)
-        
+
         # 2 ~ final 
         for i in range(2, self.fin_stage):
             x, x_t = eval('self.conv_trans_' + str(i))(x, x_t)

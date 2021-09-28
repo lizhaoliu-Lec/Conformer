@@ -138,7 +138,7 @@ class FPN_CARAFE(nn.Module):
 
         # add extra conv layers (e.g., RetinaNet)
         extra_out_levels = (
-            num_outs - self.backbone_end_level + self.start_level)
+                num_outs - self.backbone_end_level + self.start_level)
         if extra_out_levels >= 1:
             for i in range(extra_out_levels):
                 in_channels = (

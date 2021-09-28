@@ -4,9 +4,8 @@
 
 ## Results and Models
 
-We provide config files to reproduce the object detection results in the
-ECCV 2020 paper for Probabilistic Anchor Assignment with IoU
-Prediction for Object Detection.
+We provide config files to reproduce the object detection results in the ECCV 2020 paper for Probabilistic Anchor
+Assignment with IoU Prediction for Object Detection.
 
 | Backbone    | Lr schd | Mem (GB) | Score voting | box AP | Config | Download |
 |:-----------:|:-------:|:--------:|:------------:|:------:|:------:|:--------:|
@@ -21,4 +20,5 @@ Prediction for Object Detection.
 
 **Note**:
 
-1. We find that the performance is unstable with 1x setting and may fluctuate by about 0.2 mAP. We report the best results.
+1. We find that the performance is unstable with 1x setting and may fluctuate by about 0.2 mAP. We report the best
+   results.

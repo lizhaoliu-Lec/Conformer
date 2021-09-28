@@ -22,10 +22,9 @@ class BBoxHead(nn.Module):
         return losses
 ```
 
-`bbox_head.loss()` will be called during model forward.
-The returned dict contains `'loss_bbox'`, `'loss_cls'`, `'acc'` .
-Only `'loss_bbox'`, `'loss_cls'` will be used during back propagation,
+`bbox_head.loss()` will be called during model forward. The returned dict contains `'loss_bbox'`, `'loss_cls'`, `'acc'`
+. Only `'loss_bbox'`, `'loss_cls'` will be used during back propagation,
 `'acc'` will only be used as a metric to monitor training process.
 
-By default, only values whose keys contain `'loss'` will be back propagated.
-This behavior could be changed by modifying `BaseDetector.train_step()`.
+By default, only values whose keys contain `'loss'` will be back propagated. This behavior could be changed by
+modifying `BaseDetector.train_step()`.

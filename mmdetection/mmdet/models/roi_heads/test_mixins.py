@@ -13,7 +13,6 @@ if sys.version_info >= (3, 7):
 
 
 class BBoxTestMixin(object):
-
     if sys.version_info >= (3, 7):
 
         async def async_test_bboxes(self,
@@ -77,7 +76,7 @@ class BBoxTestMixin(object):
                 bbox_pred = self.bbox_head.bbox_pred_split(
                     bbox_pred, num_proposals_per_img)
         else:
-            bbox_pred = (None, ) * len(proposals)
+            bbox_pred = (None,) * len(proposals)
 
         # apply bbox post-processing to each image individually
         det_bboxes = []
@@ -131,7 +130,6 @@ class BBoxTestMixin(object):
 
 
 class MaskTestMixin(object):
-
     if sys.version_info >= (3, 7):
 
         async def async_test_mask(self,

@@ -14,6 +14,7 @@ _DEFAULT_SCALE_CLAMP = math.log(100000.0 / 16)
 
 import pdb
 
+
 def _no_grad_trunc_normal_(tensor, mean, std, a, b):
     # Cut & paste from PyTorch official master until it's in a few official releases - RW
     # Method based on https://people.sc.fsu.edu/~jburkardt/presentations/truncated_normal.pdf
@@ -49,6 +50,7 @@ def _no_grad_trunc_normal_(tensor, mean, std, a, b):
         tensor.clamp_(min=a, max=b)
         return tensor
 
+
 def trunc_normal_(tensor, mean=0., std=1., a=-2., b=2.):
     # type: (Tensor, float, float, float, float) -> Tensor
     r"""Fills the input Tensor with values drawn from a truncated
@@ -69,9 +71,11 @@ def trunc_normal_(tensor, mean=0., std=1., a=-2., b=2.):
     """
     return _no_grad_trunc_normal_(tensor, mean, std, a, b)
 
+
 class DropPath(nn.Module):
     """Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).
     """
+
     def __init__(self, drop_prob=None):
         super(DropPath, self).__init__()
         self.drop_prob = drop_prob
@@ -97,6 +101,7 @@ class DropPath(nn.Module):
         random_tensor.floor_()  # binarize
         output = x.div(keep_prob) * random_tensor
         return output
+
 
 class Mlp(nn.Module):
     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, drop=0.):
@@ -178,7 +183,8 @@ class ConvBlock(nn.Module):
         self.bn1 = norm_layer(med_planes)
         self.act1 = act_layer(inplace=True)
 
-        self.conv2 = nn.Conv2d(med_planes, med_planes, kernel_size=3, stride=stride, groups=groups, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(med_planes, med_planes, kernel_size=3, stride=stride, groups=groups, padding=1,
+                               bias=False)
         self.bn2 = norm_layer(med_planes)
         self.act2 = act_layer(inplace=True)
 
@@ -265,7 +271,7 @@ class FCUUp(nn.Module):
     """
 
     def __init__(self, inplanes, outplanes, up_stride, act_layer=nn.ReLU,
-                 norm_layer=partial(nn.BatchNorm2d, eps=1e-6),):
+                 norm_layer=partial(nn.BatchNorm2d, eps=1e-6), ):
         super(FCUUp, self).__init__()
 
         self.up_stride = up_stride
@@ -285,6 +291,7 @@ class FCUUp(nn.Module):
 class Med_ConvBlock(nn.Module):
     """ special case for Convblock with down sampling,
     """
+
     def __init__(self, inplanes, act_layer=nn.ReLU, groups=1, norm_layer=partial(nn.BatchNorm2d, eps=1e-6),
                  drop_block=None, drop_path=None):
 
@@ -351,10 +358,12 @@ class ConvTransBlock(nn.Module):
 
         super(ConvTransBlock, self).__init__()
         expansion = 4
-        self.cnn_block = ConvBlock(inplanes=inplanes, outplanes=outplanes, res_conv=res_conv, stride=stride, groups=groups)
+        self.cnn_block = ConvBlock(inplanes=inplanes, outplanes=outplanes, res_conv=res_conv, stride=stride,
+                                   groups=groups)
 
         if last_fusion:
-            self.fusion_block = ConvBlock(inplanes=outplanes, outplanes=outplanes, stride=2, res_conv=True, groups=groups)
+            self.fusion_block = ConvBlock(inplanes=outplanes, outplanes=outplanes, stride=2, res_conv=True,
+                                          groups=groups)
         else:
             self.fusion_block = ConvBlock(inplanes=outplanes, outplanes=outplanes, groups=groups)
 
@@ -394,6 +403,7 @@ class ConvTransBlock(nn.Module):
         x = self.fusion_block(x, x_t_r, return_x_2=False)
 
         return x, x_t
+
 
 @BACKBONES.register_module()
 class Conformer(nn.Module):
@@ -521,7 +531,7 @@ class Conformer(nn.Module):
 
     @torch.jit.ignore
     def no_weight_decay(self):
-        return {'cls_token',}
+        return {'cls_token', }
 
     def forward(self, x):
         output = []
@@ -544,7 +554,7 @@ class Conformer(nn.Module):
                 output.append(x)
 
         if self.return_cls_token:
-            return tuple(output), self.trans_cls_head(self.trans_norm(x_t[:, [0,]]))
+            return tuple(output), self.trans_cls_head(self.trans_norm(x_t[:, [0, ]]))
         else:
             return tuple(output)
 

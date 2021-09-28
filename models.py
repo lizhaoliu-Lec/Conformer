@@ -23,6 +23,7 @@ def deit_tiny_patch16_224(pretrained=False, **kwargs):
         model.load_state_dict(checkpoint["model"])
     return model
 
+
 @register_model
 def deit_small_patch16_224(pretrained=False, **kwargs):
     model = VisionTransformer(
@@ -37,6 +38,7 @@ def deit_small_patch16_224(pretrained=False, **kwargs):
         model.load_state_dict(checkpoint["model"])
     return model
 
+
 @register_model
 def deit_med_patch16_224(pretrained=False, **kwargs):
     model = VisionTransformer(
@@ -46,6 +48,7 @@ def deit_med_patch16_224(pretrained=False, **kwargs):
     if pretrained:
         raise NotImplementedError
     return model
+
 
 @register_model
 def deit_base_patch16_224(pretrained=False, **kwargs):
@@ -61,6 +64,7 @@ def deit_base_patch16_224(pretrained=False, **kwargs):
         model.load_state_dict(checkpoint["model"])
     return model
 
+
 @register_model
 def Conformer_tiny_patch16(pretrained=False, **kwargs):
     model = Conformer(patch_size=16, channel_ratio=1, embed_dim=384, depth=12,
@@ -68,6 +72,7 @@ def Conformer_tiny_patch16(pretrained=False, **kwargs):
     if pretrained:
         raise NotImplementedError
     return model
+
 
 @register_model
 def Conformer_small_patch16(pretrained=False, **kwargs):
@@ -77,6 +82,7 @@ def Conformer_small_patch16(pretrained=False, **kwargs):
         raise NotImplementedError
     return model
 
+
 @register_model
 def Conformer_small_patch32(pretrained=False, **kwargs):
     model = Conformer(patch_size=32, channel_ratio=4, embed_dim=384, depth=12,
@@ -84,6 +90,7 @@ def Conformer_small_patch32(pretrained=False, **kwargs):
     if pretrained:
         raise NotImplementedError
     return model
+
 
 @register_model
 def Conformer_base_patch16(pretrained=False, **kwargs):

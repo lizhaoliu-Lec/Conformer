@@ -2,16 +2,23 @@
 
 ## Mirror sites
 
-We use AWS as the main site to host our model zoo, and maintain a mirror on aliyun.
-You can replace `https://s3.ap-northeast-2.amazonaws.com/open-mmlab` with `https://open-mmlab.oss-cn-beijing.aliyuncs.com` in model urls.
+We use AWS as the main site to host our model zoo, and maintain a mirror on aliyun. You can
+replace `https://s3.ap-northeast-2.amazonaws.com/open-mmlab` with `https://open-mmlab.oss-cn-beijing.aliyuncs.com` in
+model urls.
 
 ## Common settings
 
 - All models were trained on `coco_2017_train`, and tested on the `coco_2017_val`.
 - We use distributed training.
-- All pytorch-style pretrained backbones on ImageNet are from PyTorch model zoo, caffe-style pretrained backbones are converted from the newly released model from detectron2.
-- For fair comparison with other codebases, we report the GPU memory as the maximum value of `torch.cuda.max_memory_allocated()` for all 8 GPUs. Note that this value is usually less than what `nvidia-smi` shows.
-- We report the inference time as the total time of network forwarding and post-processing, excluding the data loading time. Results are obtained with the script [benchmark.py](https://github.com/open-mmlab/mmdetection/blob/master/tools/analysis_tools/benchmark.py) which computes the average time on 2000 images.
+- All pytorch-style pretrained backbones on ImageNet are from PyTorch model zoo, caffe-style pretrained backbones are
+  converted from the newly released model from detectron2.
+- For fair comparison with other codebases, we report the GPU memory as the maximum value
+  of `torch.cuda.max_memory_allocated()` for all 8 GPUs. Note that this value is usually less than what `nvidia-smi`
+  shows.
+- We report the inference time as the total time of network forwarding and post-processing, excluding the data loading
+  time. Results are obtained with the
+  script [benchmark.py](https://github.com/open-mmlab/mmdetection/blob/master/tools/analysis_tools/benchmark.py) which
+  computes the average time on 2000 images.
 
 ## Baselines
 
@@ -53,11 +60,13 @@ Please refer to [Group Normalization](https://github.com/open-mmlab/mmdetection/
 
 ### Weight Standardization
 
-Please refer to [Weight Standardization](https://github.com/open-mmlab/mmdetection/blob/master/configs/gn+ws) for details.
+Please refer to [Weight Standardization](https://github.com/open-mmlab/mmdetection/blob/master/configs/gn+ws) for
+details.
 
 ### Deformable Convolution v2
 
-Please refer to [Deformable Convolutional Networks](https://github.com/open-mmlab/mmdetection/blob/master/configs/dcn) for details.
+Please refer to [Deformable Convolutional Networks](https://github.com/open-mmlab/mmdetection/blob/master/configs/dcn)
+for details.
 
 ### CARAFE: Content-Aware ReAssembly of FEatures
 
@@ -73,7 +82,8 @@ Please refer to [Libra R-CNN](https://github.com/open-mmlab/mmdetection/blob/mas
 
 ### Guided Anchoring
 
-Please refer to [Guided Anchoring](https://github.com/open-mmlab/mmdetection/blob/master/configs/guided_anchoring) for details.
+Please refer to [Guided Anchoring](https://github.com/open-mmlab/mmdetection/blob/master/configs/guided_anchoring) for
+details.
 
 ### FCOS
 
@@ -113,7 +123,9 @@ Please refer to [Mask Scoring R-CNN](https://github.com/open-mmlab/mmdetection/b
 
 ### Train from Scratch
 
-Please refer to [Rethinking ImageNet Pre-training](https://github.com/open-mmlab/mmdetection/blob/master/configs/scratch) for details.
+Please refer
+to [Rethinking ImageNet Pre-training](https://github.com/open-mmlab/mmdetection/blob/master/configs/scratch) for
+details.
 
 ### NAS-FPN
 
@@ -173,7 +185,8 @@ Please refer to [SABL](https://github.com/open-mmlab/mmdetection/blob/master/con
 
 ### CentripetalNet
 
-Please refer to [CentripetalNet](https://github.com/open-mmlab/mmdetection/blob/master/configs/centripetalnet) for details.
+Please refer to [CentripetalNet](https://github.com/open-mmlab/mmdetection/blob/master/configs/centripetalnet) for
+details.
 
 ### ResNeSt
 
@@ -185,17 +198,29 @@ Please refer to [DETR](https://github.com/open-mmlab/mmdetection/blob/master/con
 
 ### Other datasets
 
-We also benchmark some methods on [PASCAL VOC](https://github.com/open-mmlab/mmdetection/blob/master/configs/pascal_voc), [Cityscapes](https://github.com/open-mmlab/mmdetection/blob/master/configs/cityscapes) and [WIDER FACE](https://github.com/open-mmlab/mmdetection/blob/master/configs/wider_face).
+We also benchmark some methods on [PASCAL VOC](https://github.com/open-mmlab/mmdetection/blob/master/configs/pascal_voc)
+, [Cityscapes](https://github.com/open-mmlab/mmdetection/blob/master/configs/cityscapes)
+and [WIDER FACE](https://github.com/open-mmlab/mmdetection/blob/master/configs/wider_face).
 
 ### Pre-trained Models
 
-We also train [Faster R-CNN](https://github.com/open-mmlab/mmdetection/blob/master/configs/faster_rcnn) and [Mask R-CNN](https://github.com/open-mmlab/mmdetection/blob/master/configs/mask_rcnn) using ResNet-50 and [RegNetX-3.2G](https://github.com/open-mmlab/mmdetection/blob/master/configs/regnet) with multi-scale training and longer schedules. These models serve as strong pre-trained models for downstream tasks for convenience.
+We also train [Faster R-CNN](https://github.com/open-mmlab/mmdetection/blob/master/configs/faster_rcnn)
+and [Mask R-CNN](https://github.com/open-mmlab/mmdetection/blob/master/configs/mask_rcnn) using ResNet-50
+and [RegNetX-3.2G](https://github.com/open-mmlab/mmdetection/blob/master/configs/regnet) with multi-scale training and
+longer schedules. These models serve as strong pre-trained models for downstream tasks for convenience.
 
 ## Speed benchmark
 
-We compare the training speed of Mask R-CNN with some other popular frameworks (The data is copied from [detectron2](https://github.com/facebookresearch/detectron2/blob/master/docs/notes/benchmarks.md)).
-For mmdetection, we benchmark with [mask_rcnn_r50_caffe_fpn_poly_1x_coco_v1.py](https://github.com/open-mmlab/mmdetection/blob/master/configs/mask_rcnn/mask_rcnn_r50_caffe_fpn_poly_1x_coco_v1.py), which should have the same setting with [mask_rcnn_R_50_FPN_noaug_1x.yaml](https://github.com/facebookresearch/detectron2/blob/master/configs/Detectron1-Comparisons/mask_rcnn_R_50_FPN_noaug_1x.yaml) of detectron2.
-We also provide the [checkpoint](http://download.openmmlab.com/mmdetection/v2.0/benchmark/mask_rcnn_r50_caffe_fpn_poly_1x_coco_no_aug/mask_rcnn_r50_caffe_fpn_poly_1x_coco_no_aug_compare_20200518-10127928.pth) and [training log](http://download.openmmlab.com/mmdetection/v2.0/benchmark/mask_rcnn_r50_caffe_fpn_poly_1x_coco_no_aug/mask_rcnn_r50_caffe_fpn_poly_1x_coco_no_aug_20200518_105755.log.json) for reference. The throughput is computed as the average throughput in iterations 100-500 to skip GPU warmup time.
+We compare the training speed of Mask R-CNN with some other popular frameworks (The data is copied
+from [detectron2](https://github.com/facebookresearch/detectron2/blob/master/docs/notes/benchmarks.md)). For
+mmdetection, we benchmark
+with [mask_rcnn_r50_caffe_fpn_poly_1x_coco_v1.py](https://github.com/open-mmlab/mmdetection/blob/master/configs/mask_rcnn/mask_rcnn_r50_caffe_fpn_poly_1x_coco_v1.py)
+, which should have the same setting
+with [mask_rcnn_R_50_FPN_noaug_1x.yaml](https://github.com/facebookresearch/detectron2/blob/master/configs/Detectron1-Comparisons/mask_rcnn_R_50_FPN_noaug_1x.yaml)
+of detectron2. We also provide
+the [checkpoint](http://download.openmmlab.com/mmdetection/v2.0/benchmark/mask_rcnn_r50_caffe_fpn_poly_1x_coco_no_aug/mask_rcnn_r50_caffe_fpn_poly_1x_coco_no_aug_compare_20200518-10127928.pth)
+and [training log](http://download.openmmlab.com/mmdetection/v2.0/benchmark/mask_rcnn_r50_caffe_fpn_poly_1x_coco_no_aug/mask_rcnn_r50_caffe_fpn_poly_1x_coco_no_aug_20200518_105755.log.json)
+for reference. The throughput is computed as the average throughput in iterations 100-500 to skip GPU warmup time.
 
 | Implementation       | Throughput (img/s) |
 |----------------------|--------------------|
@@ -209,9 +234,10 @@ We also provide the [checkpoint](http://download.openmmlab.com/mmdetection/v2.0/
 
 ## Comparison with Detectron2
 
-We compare mmdetection with [Detectron2](https://github.com/facebookresearch/detectron2.git) in terms of speed and performance.
-We use the commit id [185c27e](https://github.com/facebookresearch/detectron2/tree/185c27e4b4d2d4c68b5627b3765420c6d7f5a659)(30/4/2020) of detectron.
-For fair comparison, we install and run both frameworks on the same machine.
+We compare mmdetection with [Detectron2](https://github.com/facebookresearch/detectron2.git) in terms of speed and
+performance. We use the commit
+id [185c27e](https://github.com/facebookresearch/detectron2/tree/185c27e4b4d2d4c68b5627b3765420c6d7f5a659)(30/4/2020) of
+detectron. For fair comparison, we install and run both frameworks on the same machine.
 
 ### Hardware
 
@@ -246,11 +272,10 @@ The training speed is measure with s/iter. The lower, the better.
 
 ### Inference Speed
 
-The inference speed is measured with fps (img/s) on a single GPU, the higher, the better.
-To be consistent with Detectron2, we report the pure inference speed (without the time of data loading).
-For Mask R-CNN, we exclude the time of RLE encoding in post-processing.
-We also include the officially reported speed in the parentheses, which is slightly higher
-than the results tested on our server due to differences of hardwares.
+The inference speed is measured with fps (img/s) on a single GPU, the higher, the better. To be consistent with
+Detectron2, we report the pure inference speed (without the time of data loading). For Mask R-CNN, we exclude the time
+of RLE encoding in post-processing. We also include the officially reported speed in the parentheses, which is slightly
+higher than the results tested on our server due to differences of hardwares.
 
 | Type         | Detectron2  | mmdetection |
 |--------------|-------------|-------------|

@@ -22,7 +22,7 @@ class MultiheadAttention(nn.Module):
     def __init__(self, embed_dims, num_heads, dropout=0.0):
         super(MultiheadAttention, self).__init__()
         assert embed_dims % num_heads == 0, 'embed_dims must be ' \
-            f'divisible by num_heads. got {embed_dims} and {num_heads}.'
+                                            f'divisible by num_heads. got {embed_dims} and {num_heads}.'
         self.embed_dims = embed_dims
         self.num_heads = num_heads
         self.dropout = dropout
@@ -126,7 +126,7 @@ class FFN(nn.Module):
                  add_residual=True):
         super(FFN, self).__init__()
         assert num_fcs >= 2, 'num_fcs should be no less ' \
-            f'than 2. got {num_fcs}.'
+                             f'than 2. got {num_fcs}.'
         self.embed_dims = embed_dims
         self.feedforward_channels = feedforward_channels
         self.num_fcs = num_fcs
@@ -798,7 +798,7 @@ class DynamicConv(nn.Module):
 
         self.activation = build_activation_layer(act_cfg)
 
-        num_output = self.out_channels * input_feat_shape**2
+        num_output = self.out_channels * input_feat_shape ** 2
         self.fc_layer = nn.Linear(num_output, self.out_channels)
         self.fc_norm = build_norm_layer(norm_cfg, self.out_channels)[1]
 

@@ -90,7 +90,7 @@ def evaluate(data_loader, model, device):
             output = model(images)
             # Conformer
             if isinstance(output, list):
-                loss_list = [criterion(o, target) / len(output)  for o in output]
+                loss_list = [criterion(o, target) / len(output) for o in output]
                 loss = sum(loss_list)
             # others
             else:
@@ -117,11 +117,13 @@ def evaluate(data_loader, model, device):
             metric_logger.meters['acc1'].update(acc1.item(), n=batch_size)
             metric_logger.meters['acc5'].update(acc5.item(), n=batch_size)
     if isinstance(output, list):
-        print('* Acc@heads_top1 {heads_top1.global_avg:.3f} Acc@head_1 {head1_top1.global_avg:.3f} Acc@head_2 {head2_top1.global_avg:.3f} '
-              'loss@total {losses.global_avg:.3f} loss@1 {loss_0.global_avg:.3f} loss@2 {loss_1.global_avg:.3f} '
-              .format(heads_top1=metric_logger.acc1, head1_top1=metric_logger.acc1_head1, head2_top1=metric_logger.acc1_head2,
-                      losses=metric_logger.loss, loss_0=metric_logger.loss_0, loss_1=metric_logger.loss_1))
+        print(
+            '* Acc@heads_top1 {heads_top1.global_avg:.3f} Acc@head_1 {head1_top1.global_avg:.3f} Acc@head_2 {head2_top1.global_avg:.3f} '
+            'loss@total {losses.global_avg:.3f} loss@1 {loss_0.global_avg:.3f} loss@2 {loss_1.global_avg:.3f} '
+            .format(heads_top1=metric_logger.acc1, head1_top1=metric_logger.acc1_head1,
+                    head2_top1=metric_logger.acc1_head2,
+                    losses=metric_logger.loss, loss_0=metric_logger.loss_0, loss_1=metric_logger.loss_1))
     else:
         print('* Acc@1 {top1.global_avg:.3f} Acc@5 {top5.global_avg:.3f} loss {losses.global_avg:.3f}'
-          .format(top1=metric_logger.acc1, top5=metric_logger.acc5, losses=metric_logger.loss))
+              .format(top1=metric_logger.acc1, top5=metric_logger.acc5, losses=metric_logger.loss))
     return {k: meter.global_avg for k, meter in metric_logger.meters.items()}

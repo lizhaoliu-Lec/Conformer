@@ -1,6 +1,6 @@
 name: build
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   lint:
@@ -26,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7]
-        torch: [1.3.1, 1.5.1, 1.6.0]
+        python-version: [ 3.7 ]
+        torch: [ 1.3.1, 1.5.1, 1.6.0 ]
         include:
           - torch: 1.3.1
             torchvision: 0.4.2
@@ -72,8 +72,8 @@ jobs:
       UBUNTU_VERSION: ubuntu1804
     strategy:
       matrix:
-        python-version: [3.7]
-        torch: [1.3.1, 1.5.1+cu101, 1.6.0+cu101]
+        python-version: [ 3.7 ]
+        torch: [ 1.3.1, 1.5.1+cu101, 1.6.0+cu101 ]
         include:
           - torch: 1.3.1
             torchvision: 0.4.2

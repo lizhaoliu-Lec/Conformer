@@ -286,7 +286,7 @@ class VFNetHead(ATSSHead, FCOSHead):
         """
         dcn_base_offset = self.dcn_base_offset.type_as(bbox_pred)
         bbox_pred_grad_mul = (1 - gradient_mul) * bbox_pred.detach() + \
-            gradient_mul * bbox_pred
+                             gradient_mul * bbox_pred
         # map to the feature map scale
         bbox_pred_grad_mul = bbox_pred_grad_mul / stride
         N, C, H, W = bbox_pred.size()

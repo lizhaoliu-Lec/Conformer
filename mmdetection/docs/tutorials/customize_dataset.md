@@ -2,7 +2,11 @@
 
 ## Support new data format
 
-To support a new data format, you can either convert them to existing formats (COCO format or PASCAL format) or directly convert them to the middle format. You could also choose to convert them offline (before training by a script) or online (implement a new dataset and do the conversion at training). In MMDetection, we recommand to convert the data into COCO formats and do the conversion offline, thus you only need to modify the config's data annotation pathes and classes after the conversion to your data.
+To support a new data format, you can either convert them to existing formats (COCO format or PASCAL format) or directly
+convert them to the middle format. You could also choose to convert them offline (before training by a script) or
+online (implement a new dataset and do the conversion at training). In MMDetection, we recommand to convert the data
+into COCO formats and do the conversion offline, thus you only need to modify the config's data annotation pathes and
+classes after the conversion to your data.
 
 ### Reorganize new data formats to existing format
 
@@ -49,19 +53,23 @@ There are three necessary keys in the json file:
 - `annotations`: contains the list of instance annotations.
 - `categories`: contains the list of categories names and their ID.
 
-After the data pre-processing, there are two steps for users to train the customized new dataset with existing format (e.g. COCO format):
+After the data pre-processing, there are two steps for users to train the customized new dataset with existing format (
+e.g. COCO format):
 
 1. Modify the config file for using the customized dataset.
 2. Check the annotations of the customized dataset.
 
-Here we give an example to show the above two steps, which uses a customized dataset of 5 classes with COCO format to train an existing Cascade MaskRCNN R50 FPN detector.
+Here we give an example to show the above two steps, which uses a customized dataset of 5 classes with COCO format to
+train an existing Cascade MaskRCNN R50 FPN detector.
 
 #### 1. Modify the config file for using the customized dataset
 
 There are two aspects involved in the modification of config file:
 
-1. The `data` field. Specifically, you need to explicitly add the `classes` fields in `data.train`, `data.val` and `data.test`.
-2. The `num_classes` field in the `model` part. Explicitly over-write all the `num_classes` from default value (e.g. 80 in COCO) to your classes number.
+1. The `data` field. Specifically, you need to explicitly add the `classes` fields in `data.train`, `data.val`
+   and `data.test`.
+2. The `num_classes` field in the `model` part. Explicitly over-write all the `num_classes` from default value (e.g. 80
+   in COCO) to your classes number.
 
 In `configs/my_custom_config.py`:
 
@@ -121,9 +129,15 @@ model = dict(
 
 Assuming your customized dataset is COCO format, make sure you have the correct annotations in the customized dataset:
 
-1. The length for `categories` field in annotations should exactly equal the tuple length of `classes` fields in your config, meaning the number of classes (e.g. 5 in this example).
-2. The `classes` fields in your config file should have exactly the same elements and the same order with the `name` in `categories` of annotations. MMDetection automatically maps the uncontinuous `id` in `categories` to the continuous label indices, so the string order of `name` in `categories` field affects the order of label indices. Meanwhile, the string order of `classes` in config affects the label text during visualization of predicted bounding boxes.
-3. The `category_id` in `annotations` field should be valid, i.e., all values in `category_id` should belong to `id` in `categories`.
+1. The length for `categories` field in annotations should exactly equal the tuple length of `classes` fields in your
+   config, meaning the number of classes (e.g. 5 in this example).
+2. The `classes` fields in your config file should have exactly the same elements and the same order with the `name`
+   in `categories` of annotations. MMDetection automatically maps the uncontinuous `id` in `categories` to the
+   continuous label indices, so the string order of `name` in `categories` field affects the order of label indices.
+   Meanwhile, the string order of `classes` in config affects the label text during visualization of predicted bounding
+   boxes.
+3. The `category_id` in `annotations` field should be valid, i.e., all values in `category_id` should belong to `id`
+   in `categories`.
 
 Here is a valid example of annotations:
 
@@ -152,24 +166,27 @@ Here is a valid example of annotations:
  ]
 ```
 
-We use this way to support CityScapes dataset. The script is in [cityscapes.py](https://github.com/open-mmlab/mmdetection/blob/master/tools/dataset_converters/cityscapes.py) and we also provide the finetuning [configs](https://github.com/open-mmlab/mmdetection/blob/master/configs/cityscapes).
+We use this way to support CityScapes dataset. The script is
+in [cityscapes.py](https://github.com/open-mmlab/mmdetection/blob/master/tools/dataset_converters/cityscapes.py) and we
+also provide the finetuning [configs](https://github.com/open-mmlab/mmdetection/blob/master/configs/cityscapes).
 
 **Note**
 
-1. For instance segmentation datasets, **MMDetection only supports evaluating mask AP of dataset in COCO format for now**.
-2. It is recommanded to convert the data offline before training, thus you can still use `CocoDataset` and only need to modify the path of annotations and the training classes.
+1. For instance segmentation datasets, **MMDetection only supports evaluating mask AP of dataset in COCO format for
+   now**.
+2. It is recommanded to convert the data offline before training, thus you can still use `CocoDataset` and only need to
+   modify the path of annotations and the training classes.
 
 ### Reorganize new data format to middle format
 
-It is also fine if you do not want to convert the annotation format to COCO or PASCAL format.
-Actually, we define a simple annotation format and all existing datasets are
-processed to be compatible with it, either online or offline.
+It is also fine if you do not want to convert the annotation format to COCO or PASCAL format. Actually, we define a
+simple annotation format and all existing datasets are processed to be compatible with it, either online or offline.
 
-The annotation of a dataset is a list of dict, each dict corresponds to an image.
-There are 3 field `filename` (relative path), `width`, `height` for testing,
-and an additional field `ann` for training. `ann` is also a dict containing at least 2 fields:
-`bboxes` and `labels`, both of which are numpy arrays. Some datasets may provide
-annotations like crowd/difficult/ignored bboxes, we use `bboxes_ignore` and `labels_ignore`
+The annotation of a dataset is a list of dict, each dict corresponds to an image. There are 3 field `filename` (relative
+path), `width`, `height` for testing, and an additional field `ann` for training. `ann` is also a dict containing at
+least 2 fields:
+`bboxes` and `labels`, both of which are numpy arrays. Some datasets may provide annotations like
+crowd/difficult/ignored bboxes, we use `bboxes_ignore` and `labels_ignore`
 to cover them.
 
 Here is an example.
@@ -198,18 +215,19 @@ There are two ways to work with custom datasets.
 
   You can write a new Dataset class inherited from `CustomDataset`, and overwrite two methods
   `load_annotations(self, ann_file)` and `get_ann_info(self, idx)`,
-  like [CocoDataset](https://github.com/open-mmlab/mmdetection/blob/master/mmdet/datasets/coco.py) and [VOCDataset](https://github.com/open-mmlab/mmdetection/blob/master/mmdet/datasets/voc.py).
+  like [CocoDataset](https://github.com/open-mmlab/mmdetection/blob/master/mmdet/datasets/coco.py)
+  and [VOCDataset](https://github.com/open-mmlab/mmdetection/blob/master/mmdet/datasets/voc.py).
 
 - offline conversion
 
-  You can convert the annotation format to the expected format above and save it to
-  a pickle or json file, like [pascal_voc.py](https://github.com/open-mmlab/mmdetection/blob/master/tools/dataset_converters/pascal_voc.py).
+  You can convert the annotation format to the expected format above and save it to a pickle or json file,
+  like [pascal_voc.py](https://github.com/open-mmlab/mmdetection/blob/master/tools/dataset_converters/pascal_voc.py).
   Then you can simply use `CustomDataset`.
 
 ### An example of customized dataset
 
-Assume the annotation is in a new format in text files.
-The bounding boxes annotations are stored in text file `annotation.txt` as the following
+Assume the annotation is in a new format in text files. The bounding boxes annotations are stored in text
+file `annotation.txt` as the following
 
 ```
 #
@@ -300,7 +318,8 @@ Currently it supports to three dataset wrappers as below:
 
 ### Repeat dataset
 
-We use `RepeatDataset` as wrapper to repeat the dataset. For example, suppose the original dataset is `Dataset_A`, to repeat it, the config looks like the following
+We use `RepeatDataset` as wrapper to repeat the dataset. For example, suppose the original dataset is `Dataset_A`, to
+repeat it, the config looks like the following
 
 ```python
 dataset_A_train = dict(
@@ -316,10 +335,10 @@ dataset_A_train = dict(
 
 ### Class balanced dataset
 
-We use `ClassBalancedDataset` as wrapper to repeat the dataset based on category
-frequency. The dataset to repeat needs to instantiate function `self.get_cat_ids(idx)`
-to support `ClassBalancedDataset`.
-For example, to repeat `Dataset_A` with `oversample_thr=1e-3`, the config looks like the following
+We use `ClassBalancedDataset` as wrapper to repeat the dataset based on category frequency. The dataset to repeat needs
+to instantiate function `self.get_cat_ids(idx)`
+to support `ClassBalancedDataset`. For example, to repeat `Dataset_A` with `oversample_thr=1e-3`, the config looks like
+the following
 
 ```python
 dataset_A_train = dict(
@@ -339,7 +358,8 @@ You may refer to [source code](../../mmdet/datasets/dataset_wrappers.py) for det
 
 There are three ways to concatenate the dataset.
 
-1. If the datasets you want to concatenate are in the same type with different annotation files, you can concatenate the dataset configs like the following.
+1. If the datasets you want to concatenate are in the same type with different annotation files, you can concatenate the
+   dataset configs like the following.
 
     ```python
     dataset_A_train = dict(
@@ -349,7 +369,8 @@ There are three ways to concatenate the dataset.
     )
     ```
 
-    If the concatenated dataset is used for test or evaluation, this manner supports to evaluate each dataset separately. To test the concatenated datasets as a whole, you can set `separate_eval=False` as below.
+   If the concatenated dataset is used for test or evaluation, this manner supports to evaluate each dataset separately.
+   To test the concatenated datasets as a whole, you can set `separate_eval=False` as below.
 
     ```python
     dataset_A_train = dict(
@@ -378,7 +399,8 @@ There are three ways to concatenate the dataset.
         )
     ```
 
-    If the concatenated dataset is used for test or evaluation, this manner also supports to evaluate each dataset separately.
+   If the concatenated dataset is used for test or evaluation, this manner also supports to evaluate each dataset
+   separately.
 
 3. We also support to define `ConcatDataset` explicitly as the following.
 
@@ -396,14 +418,18 @@ There are three ways to concatenate the dataset.
             separate_eval=False))
     ```
 
-    This manner allows users to evaluate all the datasets as a single one by setting `separate_eval=False`.
+   This manner allows users to evaluate all the datasets as a single one by setting `separate_eval=False`.
 
 **Note:**
 
-1. The option `separate_eval=False` assumes the datasets use `self.data_infos` during evaluation. Therefore, COCO datasets do not support this behavior since COCO datasets do not fully rely on `self.data_infos` for evaluation. Combining different types of datasets and evaluating them as a whole is not tested thus is not suggested.
-2. Evaluating `ClassBalancedDataset` and `RepeatDataset` is not supported thus evaluating concatenated datasets of these types is also not supported.
+1. The option `separate_eval=False` assumes the datasets use `self.data_infos` during evaluation. Therefore, COCO
+   datasets do not support this behavior since COCO datasets do not fully rely on `self.data_infos` for evaluation.
+   Combining different types of datasets and evaluating them as a whole is not tested thus is not suggested.
+2. Evaluating `ClassBalancedDataset` and `RepeatDataset` is not supported thus evaluating concatenated datasets of these
+   types is also not supported.
 
-A more complex example that repeats `Dataset_A` and `Dataset_B` by N and M times, respectively, and then concatenates the repeated datasets is as the following.
+A more complex example that repeats `Dataset_A` and `Dataset_B` by N and M times, respectively, and then concatenates
+the repeated datasets is as the following.
 
 ```python
 dataset_A_train = dict(
@@ -447,10 +473,9 @@ data = dict(
 
 ## Modify Dataset Classes
 
-With existing dataset types, we can modify the class names of them to train subset of the annotations.
-For example, if you want to train only three classes of the current dataset,
-you can modify the classes of dataset.
-The dataset will filter out the ground truth boxes of other classes automatically.
+With existing dataset types, we can modify the class names of them to train subset of the annotations. For example, if
+you want to train only three classes of the current dataset, you can modify the classes of dataset. The dataset will
+filter out the ground truth boxes of other classes automatically.
 
 ```python
 classes = ('person', 'bicycle', 'car')
@@ -460,8 +485,8 @@ data = dict(
     test=dict(classes=classes))
 ```
 
-MMDetection V2.0 also supports to read the classes from a file, which is common in real applications.
-For example, assume the `classes.txt` contains the name of classes as the following.
+MMDetection V2.0 also supports to read the classes from a file, which is common in real applications. For example,
+assume the `classes.txt` contains the name of classes as the following.
 
 ```
 person
@@ -481,6 +506,14 @@ data = dict(
 
 **Note**:
 
-- Before MMDetection v2.5.0, the dataset will filter out the empty GT images automatically if the classes are set and there is no way to disable that through config. This is an undesirable behavior and introduces confusion because if the classes are not set, the dataset only filter the empty GT images when `filter_empty_gt=True` and `test_mode=False`. After MMDetection v2.5.0, we decouple the image filtering process and the classes modification, i.e., the dataset will only filter empty GT images when `filter_empty_gt=True` and `test_mode=False`, no matter whether the classes are set. Thus, setting the classes only influences the annotations of classes used for training and users could decide whether to filter empty GT images by themselves.
-- Since the middle format only has box labels and does not contain the class names, when using `CustomDataset`, users cannot filter out the empty GT images through configs but only do this offline.
-- The features for setting dataset classes and dataset filtering will be refactored to be more user-friendly in v2.8.0 or v2.9.0 (depends on the progress).
+- Before MMDetection v2.5.0, the dataset will filter out the empty GT images automatically if the classes are set and
+  there is no way to disable that through config. This is an undesirable behavior and introduces confusion because if
+  the classes are not set, the dataset only filter the empty GT images when `filter_empty_gt=True` and `test_mode=False`
+  . After MMDetection v2.5.0, we decouple the image filtering process and the classes modification, i.e., the dataset
+  will only filter empty GT images when `filter_empty_gt=True` and `test_mode=False`, no matter whether the classes are
+  set. Thus, setting the classes only influences the annotations of classes used for training and users could decide
+  whether to filter empty GT images by themselves.
+- Since the middle format only has box labels and does not contain the class names, when using `CustomDataset`, users
+  cannot filter out the empty GT images through configs but only do this offline.
+- The features for setting dataset classes and dataset filtering will be refactored to be more user-friendly in v2.8.0
+  or v2.9.0 (depends on the progress).

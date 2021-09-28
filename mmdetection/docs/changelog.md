@@ -41,7 +41,8 @@
 
 ### v2.7.0 (30/11/2020)
 
-- Support new method: [DETR](https://arxiv.org/abs/2005.12872), [ResNest](https://arxiv.org/abs/2004.08955), Faster R-CNN DC5.
+- Support new method: [DETR](https://arxiv.org/abs/2005.12872), [ResNest](https://arxiv.org/abs/2004.08955), Faster
+  R-CNN DC5.
 - Support YOLO, Mask R-CNN, and Cascade R-CNN models exportable to ONNX.
 
 #### New Features
@@ -101,7 +102,8 @@
 
 #### Improvements
 
-- Refactor pytorch2onnx API into `mmdet.core.export` and use `generate_inputs_and_wrap_model` for pytorch2onnx (#3857, #3912)
+- Refactor pytorch2onnx API into `mmdet.core.export` and use `generate_inputs_and_wrap_model` for pytorch2onnx (#3857,
+  #3912)
 - Update RPN upgrade scripts for v2.5.0 compatibility (#3986)
 - Use mmcv `tensor2imgs` (#4010)
 - Update test robustness (#4000)
@@ -121,15 +123,26 @@
 #### Backwards Incompatible Changes
 
 **FP16 related methods are imported from mmcv instead of mmdet. (#3766, #3822)**
-Mixed precision training utils in `mmdet.core.fp16` are moved to `mmcv.runner`, including `force_fp32`, `auto_fp16`, `wrap_fp16_model`, and `Fp16OptimizerHook`. A deprecation warning will be raised if users attempt to import those methods from `mmdet.core.fp16`, and will be finally removed in V2.8.0.
+Mixed precision training utils in `mmdet.core.fp16` are moved to `mmcv.runner`, including `force_fp32`, `auto_fp16`
+, `wrap_fp16_model`, and `Fp16OptimizerHook`. A deprecation warning will be raised if users attempt to import those
+methods from `mmdet.core.fp16`, and will be finally removed in V2.8.0.
 
 **[0, N-1] represents foreground classes and N indicates background classes for all models. (#3221)**
-Before v2.5.0, the background label for RPN is 0, and N for other heads. Now the behavior is consistent for all models. Thus `self.background_labels` in `dense_heads` is removed and all heads use `self.num_classes` to indicate the class index of background labels.
-This change has no effect on the pre-trained models in the v2.x model zoo, but will affect the training of all models with RPN heads. Two-stage detectors whose RPN head uses softmax will be affected because the order of categories is changed.
+Before v2.5.0, the background label for RPN is 0, and N for other heads. Now the behavior is consistent for all models.
+Thus `self.background_labels` in `dense_heads` is removed and all heads use `self.num_classes` to indicate the class
+index of background labels. This change has no effect on the pre-trained models in the v2.x model zoo, but will affect
+the training of all models with RPN heads. Two-stage detectors whose RPN head uses softmax will be affected because the
+order of categories is changed.
 
 **Only call `get_subset_by_classes` when `test_mode=True` and `self.filter_empty_gt=True` (#3695)**
-Function `get_subset_by_classes` in dataset is refactored and only filters out images when `test_mode=True` and `self.filter_empty_gt=True`.
-    In the original implementation, `get_subset_by_classes` is not related to the flag `self.filter_empty_gt` and will only be called when the classes is set during initialization no matter `test_mode` is `True` or `False`. This brings ambiguous behavior and potential bugs in many cases. After v2.5.0, if `filter_empty_gt=False`, no matter whether the classes are specified in a dataset, the dataset will use all the images in the annotations. If `filter_empty_gt=True` and `test_mode=True`, no matter whether the classes are specified, the dataset will call ``get_subset_by_classes` to check the images and filter out images containing no GT boxes. Therefore, the users should be responsible for the data filtering/cleaning process for the test dataset.
+Function `get_subset_by_classes` in dataset is refactored and only filters out images when `test_mode=True`
+and `self.filter_empty_gt=True`. In the original implementation, `get_subset_by_classes` is not related to the
+flag `self.filter_empty_gt` and will only be called when the classes is set during initialization no matter `test_mode`
+is `True` or `False`. This brings ambiguous behavior and potential bugs in many cases. After v2.5.0,
+if `filter_empty_gt=False`, no matter whether the classes are specified in a dataset, the dataset will use all the
+images in the annotations. If `filter_empty_gt=True` and `test_mode=True`, no matter whether the classes are specified,
+the dataset will call ``get_subset_by_classes` to check the images and filter out images containing no GT boxes.
+Therefore, the users should be responsible for the data filtering/cleaning process for the test dataset.
 
 #### New Features
 
@@ -171,17 +184,24 @@ Function `get_subset_by_classes` in dataset is refactored and only filters out i
 **Highlights**
 
 - Fix lots of issues/bugs and reorganize the trouble shooting page
-- Support new methods [SABL](https://arxiv.org/abs/1912.04260), [YOLOv3](https://arxiv.org/abs/1804.02767), and [PAA Assign](https://arxiv.org/abs/2007.08103)
+- Support new methods [SABL](https://arxiv.org/abs/1912.04260), [YOLOv3](https://arxiv.org/abs/1804.02767),
+  and [PAA Assign](https://arxiv.org/abs/2007.08103)
 - Support Batch Inference
 - Start to publish `mmdet` package to PyPI since v2.3.0
 - Switch model zoo to download.openmmlab.com
 
 **Backwards Incompatible Changes**
 
-- Support Batch Inference (#3564, #3686, #3705): Since v2.4.0, MMDetection could inference model with multiple images in a single GPU.
-  This change influences all the test APIs in MMDetection and downstream codebases. To help the users migrate their code, we use `replace_ImageToTensor` (#3686) to convert legacy test data pipelines during dataset initialization.
-- Support RandomFlip with horizontal/vertical/diagonal direction (#3608): Since v2.4.0, MMDetection supports horizontal/vertical/diagonal flip in the data augmentation. This influences bounding box, mask, and image transformations in data augmentation process and the process that will map those data back to the original format.
-- Migrate to use `mmlvis` and `mmpycocotools` for COCO and LVIS dataset (#3727). The APIs are fully compatible with the original `lvis` and `pycocotools`. Users need to uninstall the existing pycocotools and lvis packages in their environment first and install `mmlvis` & `mmpycocotools`.
+- Support Batch Inference (#3564, #3686, #3705): Since v2.4.0, MMDetection could inference model with multiple images in
+  a single GPU. This change influences all the test APIs in MMDetection and downstream codebases. To help the users
+  migrate their code, we use `replace_ImageToTensor` (#3686) to convert legacy test data pipelines during dataset
+  initialization.
+- Support RandomFlip with horizontal/vertical/diagonal direction (#3608): Since v2.4.0, MMDetection supports
+  horizontal/vertical/diagonal flip in the data augmentation. This influences bounding box, mask, and image
+  transformations in data augmentation process and the process that will map those data back to the original format.
+- Migrate to use `mmlvis` and `mmpycocotools` for COCO and LVIS dataset (#3727). The APIs are fully compatible with the
+  original `lvis` and `pycocotools`. Users need to uninstall the existing pycocotools and lvis packages in their
+  environment first and install `mmlvis` & `mmpycocotools`.
 
 **Bug Fixes**
 
@@ -232,8 +252,11 @@ Function `get_subset_by_classes` in dataset is refactored and only filters out i
 
 **Highlights**
 
-- The CUDA/C++ operators have been moved to `mmcv.ops`. For backward compatibility `mmdet.ops` is kept as warppers of `mmcv.ops`.
-- Support new methods [CornerNet](https://arxiv.org/abs/1808.01244), [DIOU](https://arxiv.org/abs/1911.08287)/[CIOU](https://arxiv.org/abs/2005.03572) loss, and new dataset: [LVIS V1](https://arxiv.org/abs/1908.03195)
+- The CUDA/C++ operators have been moved to `mmcv.ops`. For backward compatibility `mmdet.ops` is kept as warppers
+  of `mmcv.ops`.
+- Support new methods [CornerNet](https://arxiv.org/abs/1808.01244)
+  , [DIOU](https://arxiv.org/abs/1911.08287)/[CIOU](https://arxiv.org/abs/2005.03572) loss, and new
+  dataset: [LVIS V1](https://arxiv.org/abs/1908.03195)
 - Provide more detailed colab training tutorials and more complete documentation.
 - Support to convert RetinaNet from Pytorch to ONNX.
 
@@ -280,7 +303,8 @@ Function `get_subset_by_classes` in dataset is refactored and only filters out i
 
 **Highlights**
 
-- Support new methods: [DetectoRS](https://arxiv.org/abs/2006.02334), [PointRend](https://arxiv.org/abs/1912.08193), [Generalized Focal Loss](https://arxiv.org/abs/2006.04388), [Dynamic R-CNN](https://arxiv.org/abs/2004.06002)
+- Support new methods: [DetectoRS](https://arxiv.org/abs/2006.02334), [PointRend](https://arxiv.org/abs/1912.08193)
+  , [Generalized Focal Loss](https://arxiv.org/abs/2006.04388), [Dynamic R-CNN](https://arxiv.org/abs/2004.06002)
 
 **Bug Fixes**
 
@@ -329,7 +353,8 @@ Function `get_subset_by_classes` in dataset is refactored and only filters out i
 **Highlights**
 
 - Support new backbones: [RegNetX](https://arxiv.org/abs/2003.13678), [Res2Net](https://arxiv.org/abs/1904.01169)
-- Support new methods: [NASFCOS](https://arxiv.org/abs/1906.04423), [PISA](https://arxiv.org/abs/1904.04821), [GRoIE](https://arxiv.org/abs/2004.13665)
+- Support new methods: [NASFCOS](https://arxiv.org/abs/1906.04423), [PISA](https://arxiv.org/abs/1904.04821)
+  , [GRoIE](https://arxiv.org/abs/2004.13665)
 - Support new dataset: [LVIS](https://arxiv.org/abs/1908.03195)
 
 **Bug Fixes**
@@ -343,7 +368,9 @@ Function `get_subset_by_classes` in dataset is refactored and only filters out i
 - Fix mask encoding-decoding bugs in test API (#2824)
 - Fix bug in test time augmentation (#2858, #2921, #2944)
 - Fix a typo in comment of apis/train (#2877)
-- Fix the bug of returning None when no gt bboxes are in the original image in `RandomCrop`. Fix the bug that misses to handle `gt_bboxes_ignore`, `gt_label_ignore`, and `gt_masks_ignore` in `RandomCrop`, `MinIoURandomCrop` and `Expand` modules. (#2810)
+- Fix the bug of returning None when no gt bboxes are in the original image in `RandomCrop`. Fix the bug that misses to
+  handle `gt_bboxes_ignore`, `gt_label_ignore`, and `gt_masks_ignore` in `RandomCrop`, `MinIoURandomCrop` and `Expand`
+  modules. (#2810)
 - Fix bug of `base_channels` of regnet (#2917)
 - Fix the bug of logger when loading pre-trained weights in base detector (#2936)
 
@@ -379,7 +406,8 @@ Function `get_subset_by_classes` in dataset is refactored and only filters out i
 - Use `img_fields` to handle multiple images during image transform (#2800)
 - Add upsample_cfg support in FPN (#2787)
 - Add `['img']` as default `img_fields` for back compatibility (#2809)
-- Rename the pretrained model from `open-mmlab://resnet50_caffe` and `open-mmlab://resnet50_caffe_bgr` to `open-mmlab://detectron/resnet50_caffe` and `open-mmlab://detectron2/resnet50_caffe`. (#2832)
+- Rename the pretrained model from `open-mmlab://resnet50_caffe` and `open-mmlab://resnet50_caffe_bgr`
+  to `open-mmlab://detectron/resnet50_caffe` and `open-mmlab://detectron2/resnet50_caffe`. (#2832)
 - Added sleep(2) in test.py to reduce hanging problem (#2847)
 - Support `c10::half` in CARAFE (#2890)
 - Improve documentations (#2918, #2714)
@@ -389,22 +417,29 @@ Function `get_subset_by_classes` in dataset is refactored and only filters out i
 
 In this release, we made lots of major refactoring and modifications.
 
-1. **Faster speed**. We optimize the training and inference speed for common models, achieving up to 30% speedup for training and 25% for inference. Please refer to [model zoo](model_zoo.md#comparison-with-detectron2) for details.
+1. **Faster speed**. We optimize the training and inference speed for common models, achieving up to 30% speedup for
+   training and 25% for inference. Please refer to [model zoo](model_zoo.md#comparison-with-detectron2) for details.
 
-2. **Higher performance**. We change some default hyperparameters with no additional cost, which leads to a gain of performance for most models. Please refer to [compatibility](compatibility.md#training-hyperparameters) for details.
+2. **Higher performance**. We change some default hyperparameters with no additional cost, which leads to a gain of
+   performance for most models. Please refer to [compatibility](compatibility.md#training-hyperparameters) for details.
 
-3. **More documentation and tutorials**. We add a bunch of documentation and tutorials to help users get started more smoothly. Read it [here](https://mmdetection.readthedocs.io/en/latest/).
+3. **More documentation and tutorials**. We add a bunch of documentation and tutorials to help users get started more
+   smoothly. Read it [here](https://mmdetection.readthedocs.io/en/latest/).
 
 4. **Support PyTorch 1.5**. The support for 1.1 and 1.2 is dropped, and we switch to some new APIs.
 
 5. **Better configuration system**. Inheritance is supported to reduce the redundancy of configs.
 
-6. **Better modular design**. Towards the goal of simplicity and flexibility, we simplify some encapsulation while add more other configurable modules like BBoxCoder, IoUCalculator, OptimizerConstructor, RoIHead. Target computation is also included in heads and the call hierarchy is simpler.
+6. **Better modular design**. Towards the goal of simplicity and flexibility, we simplify some encapsulation while add
+   more other configurable modules like BBoxCoder, IoUCalculator, OptimizerConstructor, RoIHead. Target computation is
+   also included in heads and the call hierarchy is simpler.
 
-7. Support new methods: [FSAF](https://arxiv.org/abs/1903.00621) and PAFPN (part of [PAFPN](https://arxiv.org/abs/1803.01534)).
+7. Support new methods: [FSAF](https://arxiv.org/abs/1903.00621) and PAFPN (part
+   of [PAFPN](https://arxiv.org/abs/1803.01534)).
 
 **Breaking Changes**
-Models training with MMDetection 1.x are not fully compatible with 2.0, please refer to the [compatibility doc](compatibility.md) for the details and how to migrate to the new version.
+Models training with MMDetection 1.x are not fully compatible with 2.0, please refer to
+the [compatibility doc](compatibility.md) for the details and how to migrate to the new version.
 
 **Improvements**
 
@@ -464,7 +499,8 @@ Models training with MMDetection 1.x are not fully compatible with 2.0, please r
 - The new MMDDP inherits from the official DDP, thus the `__init__` api is changed to be the same as official DDP.
 - The `mask_head` field in HTC config files is modified.
 - The evaluation and testing script is updated.
-- In all transforms, instance masks are stored as a numpy array shaped (n, h, w) instead of a list of (h, w) arrays, where n is the number of instances.
+- In all transforms, instance masks are stored as a numpy array shaped (n, h, w) instead of a list of (h, w) arrays,
+  where n is the number of instances.
 
 **Bug Fixes**
 
@@ -534,7 +570,8 @@ This release mainly improves the code quality and add more docstrings.
 
 - Add two test-time options `crop_mask` and `rle_mask_encode` for mask heads. (#2013)
 - Support loading grayscale images as single channel. (#1975)
-- Implement "Bridging the Gap Between Anchor-based and Anchor-free Detection via Adaptive Training Sample Selection". (#1872)
+- Implement "Bridging the Gap Between Anchor-based and Anchor-free Detection via Adaptive Training Sample Selection". (
+  #1872)
 - Add sphinx generated docs. (#1859, #1864)
 - Add GN support for flops computation. (#1850)
 - Collect env info for trouble shooting. (#1812)
@@ -545,7 +582,8 @@ The RC1 release mainly focuses on improving the user experience, and fixing bugs
 
 **Highlights**
 
-- Support new models: [FoveaBox](https://arxiv.org/abs/1904.03797), [RepPoints](https://arxiv.org/abs/1904.11490) and [FreeAnchor](https://arxiv.org/abs/1909.02466).
+- Support new models: [FoveaBox](https://arxiv.org/abs/1904.03797), [RepPoints](https://arxiv.org/abs/1904.11490)
+  and [FreeAnchor](https://arxiv.org/abs/1909.02466).
 - Add a Dockerfile.
 - Add a jupyter notebook demo and a webcam demo.
 - Setup the code style and CI.
@@ -598,7 +636,8 @@ The RC1 release mainly focuses on improving the user experience, and fixing bugs
 - Beautify the mAP printing. (#1614)
 - Add pre-commit hook. (#1536)
 - Add the argument `in_channels` to backbones. (#1475)
-- Add lots of docstrings and unit tests, thanks to [@Erotemic](https://github.com/Erotemic). (#1603, #1517, #1506, #1505, #1491, #1479, #1477, #1475, #1474)
+- Add lots of docstrings and unit tests, thanks to [@Erotemic](https://github.com/Erotemic). (#1603, #1517, #1506,
+  #1505, #1491, #1479, #1477, #1475, #1474)
 - Add support for multi-node distributed test when there is no shared storage. (#1399)
 - Optimize Dockerfile to reduce the image size. (#1306)
 - Update new results of HRNet. (#1284, #1182)
@@ -617,7 +656,8 @@ The RC1 release mainly focuses on improving the user experience, and fixing bugs
 
 - Add an option `--with_ap` to compute the AP for each class. (#1549)
 - Implement "FreeAnchor: Learning to Match Anchors for Visual Object Detection". (#1391)
-- Support [Albumentations](https://github.com/albumentations-team/albumentations) for augmentations in the data pipeline. (#1354)
+- Support [Albumentations](https://github.com/albumentations-team/albumentations) for augmentations in the data
+  pipeline. (#1354)
 - Implement "FoveaBox: Beyond Anchor-based Object Detector". (#1339)
 - Support horizontal and vertical flipping. (#1273, #1115)
 - Implement "RepPoints: Point Set Representation for Object Detection". (#1265)
@@ -630,7 +670,9 @@ The RC1 release mainly focuses on improving the user experience, and fixing bugs
 
 ### v1.0rc0 (27/07/2019)
 
-- Implement lots of new methods and components (Mixed Precision Training, HTC, Libra R-CNN, Guided Anchoring, Empirical Attention, Mask Scoring R-CNN, Grid R-CNN (Plus), GHM, GCNet, FCOS, HRNet, Weight Standardization, etc.). Thank all collaborators!
+- Implement lots of new methods and components (Mixed Precision Training, HTC, Libra R-CNN, Guided Anchoring, Empirical
+  Attention, Mask Scoring R-CNN, Grid R-CNN (Plus), GHM, GCNet, FCOS, HRNet, Weight Standardization, etc.). Thank all
+  collaborators!
 - Support two additional datasets: WIDER FACE and Cityscapes.
 - Refactoring for loss APIs and make it more flexible to adopt different losses and related hyper-parameters.
 - Speed up multi-gpu testing.
