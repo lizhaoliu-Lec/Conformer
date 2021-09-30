@@ -14,8 +14,8 @@ model = dict(
         num_heads=12,  # from 6 to 12
         mlp_ratio=4,
         qkv_bias=False,  # from True to False
-        norm_eval=True,
-        frozen_stages=1
+        # norm_eval=True, # not found in wideConformer
+        # frozen_stages=1 # not found in wideConformer
     ),
     neck=dict(
         type='FPN',

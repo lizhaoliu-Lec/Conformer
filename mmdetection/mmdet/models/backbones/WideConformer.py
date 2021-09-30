@@ -7,7 +7,7 @@ import math
 import warnings
 
 from mmdet.utils import get_root_logger
-from mmcv.runner import load_checkpoint
+from mmcv.runner import _load_checkpoint, load_state_dict
 from ..builder import BACKBONES
 
 _DEFAULT_SCALE_CLAMP = math.log(100000.0 / 16)
@@ -415,6 +415,47 @@ class ConvTransBlock(nn.Module):
         return x, x_t
 
 
+def load_checkpoint(model,
+                    filename,
+                    map_location=None,
+                    strict=False,
+                    logger=None):
+    """Load checkpoint from a file or URI.
+
+    Args:
+        model (Module): Module to load checkpoint.
+        filename (str): Accept local filepath, URL, ``torchvision://xxx``,
+            ``open-mmlab://xxx``. Please refer to ``docs/model_zoo.md`` for
+            details.
+        map_location (str): Same as :func:`torch.load`.
+        strict (bool): Whether to allow different params for the model and
+            checkpoint.
+        logger (:mod:`logging.Logger` or None): The logger for error message.
+
+    Returns:
+        dict or OrderedDict: The loaded checkpoint.
+    """
+    checkpoint = _load_checkpoint(filename, map_location)
+    # OrderedDict is a subclass of dict
+    if not isinstance(checkpoint, dict):
+        raise RuntimeError(
+            f'No state_dict found in checkpoint file {filename}')
+    # get state_dict from checkpoint
+    if 'state_dict' in checkpoint:
+        state_dict = checkpoint['state_dict']
+    else:
+        state_dict = checkpoint
+
+    state_dict = state_dict['model']
+
+    # strip prefix of state_dict
+    if list(state_dict.keys())[0].startswith('module.'):
+        state_dict = {k[7:]: v for k, v in state_dict.items()}
+    # load state_dict
+    load_state_dict(model, state_dict, strict, logger)
+    return checkpoint
+
+
 @BACKBONES.register_module()
 class WideConformer(nn.Module):
 
@@ -529,6 +570,15 @@ class WideConformer(nn.Module):
         self.conv_cls_head = nn.Linear(int(256 * channel_ratio), num_classes)
 
         self.apply(self._init_weights)
+
+    def init_weights(self, pretrained=None):
+        if isinstance(pretrained, str):
+            logger = get_root_logger()
+            load_checkpoint(self, pretrained, strict=False, logger=logger, map_location='cpu')
+        elif pretrained is None:
+            self.apply(self._init_weights)
+        else:
+            raise TypeError('pretrained must be a str or None')
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
