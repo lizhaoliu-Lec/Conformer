@@ -461,13 +461,15 @@ class WideConformer(nn.Module):
 
     def __init__(self, patch_size=16, in_chans=3, num_classes=1000, base_channel=64, channel_ratio=4, num_med_block=0,
                  embed_dim=768, depth=12, num_heads=12, mlp_ratio=4., qkv_bias=False, qk_scale=None,
-                 drop_rate=0., attn_drop_rate=0., drop_path_rate=0., cls_token=True, representation_size=False):
+                 drop_rate=0., attn_drop_rate=0., drop_path_rate=0., cls_token=True, representation_size=False,
+                 return_cls_token=False):
 
         # Transformer
         super().__init__()
         self.num_classes = num_classes
         self.num_features = self.embed_dim = embed_dim  # num_features for consistency with other models
         assert depth % 3 == 0
+        self.return_cls_token = return_cls_token
 
         self.cls_token_flag = cls_token
         if self.cls_token_flag:
@@ -608,6 +610,7 @@ class WideConformer(nn.Module):
                 param.requires_grad = False
 
     def forward(self, x):
+        output = []
         B = x.shape[0]
         if self.cls_token_flag:
             cls_tokens = self.cls_token.expand(B, -1, -1)
@@ -633,21 +636,10 @@ class WideConformer(nn.Module):
             elif torch.isnan(x_t).any() or torch.isinf(x_t).any():
                 print("Nan/Inf in transformer branch output", force=True)
 
-        # conv classification
-        x_p = self.pooling(x).flatten(1)
-        x_p = self.pre_cnn_logits(x_p)
-        conv_cls = self.conv_cls_head(x_p)
+            if i in [4, 8, 11, 12]:
+                output.append(x)
 
-        # trans classification
-        x_t = self.trans_norm(x_t)
-        if self.cls_token_flag:
-            tran_cls = self.trans_cls_head(self.pre_trans_logits(x_t[:, 0]))
+        if self.return_cls_token:
+            return tuple(output), self.trans_cls_head(self.trans_norm(x_t[:, [0, ]]))
         else:
-            tran_cls = self.trans_cls_head(self.pre_trans_logits(x_t.mean(dim=1)))
-
-        if torch.isnan(conv_cls).any() or torch.isinf(conv_cls).any():
-            print("Nan/Inf in convolutional branch classifier output", force=True)
-        elif torch.isnan(tran_cls).any() or torch.isinf(tran_cls).any():
-            print("Nan/Inf in transformer branch classifier output", force=True)
-
-        return [conv_cls, tran_cls]
+            return tuple(output)
