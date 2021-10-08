@@ -6,20 +6,20 @@ model = dict(
     type='FasterRCNN',
     pretrained=None,
     backbone=dict(
-        type='WideConformer',
-        embed_dim=768,  # from 384 to 768
+        type='Conformer',
+        embed_dim=384,
         depth=12,
-        patch_size=16,  # from 32 to 16
-        channel_ratio=8,  # from 4 to 8
-        num_heads=12,  # from 6 to 12
+        patch_size=32,
+        channel_ratio=4,
+        num_heads=6,
         mlp_ratio=4,
-        qkv_bias=False,  # from True to False
-        # norm_eval=True, # not found in wideConformer
-        # frozen_stages=1 # not found in wideConformer
+        qkv_bias=True,
+        norm_eval=True,
+        frozen_stages=1
     ),
     neck=dict(
         type='FPN',
-        in_channels=[512, 1024, 2048, 2048],  # from [256, 512, 1024, 1024] to [512, 1024, 2048, 2048]
+        in_channels=[256, 512, 1024, 1024],
         out_channels=256,
         num_outs=5),
     rpn_head=dict(
@@ -50,7 +50,7 @@ model = dict(
             in_channels=256,
             fc_out_channels=1024,
             roi_feat_size=7,
-            num_classes=4,
+            num_classes=1,
             bbox_coder=dict(
                 type='DeltaXYWHBBoxCoder',
                 target_means=[0., 0., 0., 0.],
@@ -117,7 +117,9 @@ model = dict(
         # e.g., nms=dict(type='soft_nms', iou_threshold=0.5, min_score=0.05)
     ))
 
-dataset_type = 'UADETRACDataset'
+dataset_type = 'OneClassUADETRACDataset'
+# data_root = 'data/coco/'
+# data_root = '/gdata/UA-DETRAC-COCO-Format/'
 data_root = '/userhome/UA-DETRAC-COCO-Format/'
 
 img_norm_cfg = dict(
@@ -149,21 +151,21 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=1,
+    samples_per_gpu=2,
     workers_per_gpu=2,
     train=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_train2021.json',
+        ann_file=data_root + 'annotations/instances_train2021_1class.json',
         img_prefix=data_root + 'train2021/',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_test2021.json',
+        ann_file=data_root + 'annotations/instances_test2021_1class.json',
         img_prefix=data_root + 'test2021/',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_test2021.json',
+        ann_file=data_root + 'annotations/instances_test2021_1class.json',
         img_prefix=data_root + 'test2021/',
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric='bbox')
