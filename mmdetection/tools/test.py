@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import warnings
 
@@ -22,6 +23,7 @@ def parse_args():
     parser.add_argument('config', help='test config file path')
     parser.add_argument('checkpoint', help='checkpoint file')
     parser.add_argument('--out', help='output result file in pickle format')
+    parser.add_argument('--json_out', help='output result file in json format')
     parser.add_argument(
         '--fuse-conv-bn',
         action='store_true',
@@ -99,16 +101,14 @@ def parse_args():
 
 
 def main():
+    print("===> hahahha")
     args = parse_args()
 
-    assert args.out or args.eval or args.format_only or args.show \
+    assert args.out or args.eval or args.json_out or args.show \
            or args.show_dir, \
-        ('Please specify at least one operation (save/eval/format/show the '
+        ('Please specify at least one operation (save/eval/json_out/show the '
          'results / save the results) with the argument "--out", "--eval"'
          ', "--format-only", "--show" or "--show-dir"')
-
-    if args.eval and args.format_only:
-        raise ValueError('--eval and --format_only cannot be both specified')
 
     if args.out is not None and not args.out.endswith(('.pkl', '.pickle')):
         raise ValueError('The output file must be a pkl file.')
@@ -202,8 +202,15 @@ def main():
             print(f'\nwriting results to {args.out}')
             mmcv.dump(outputs, args.out)
         kwargs = {} if args.eval_options is None else args.eval_options
-        if args.format_only:
-            dataset.format_results(outputs, **kwargs)
+        if args.json_out:
+            result_json_file_path = os.path.join(args.json_out, 'result')
+            json_result, _ = dataset.format_results(outputs, jsonfile_prefix=result_json_file_path, **kwargs)
+            print(f'\nwriting json results to ' + "{}".format(result_json_file_path))
+            result_json_file_path_path = os.path.join(args.json_out, 'result_path.json')
+            print(f'\nwriting json results to ' + "{}".format(result_json_file_path_path))
+            with open(result_json_file_path_path, 'w') as f:
+                json.dump(json_result, f)
+
         if args.eval:
             eval_kwargs = cfg.get('evaluation', {}).copy()
             # hard-code way to remove EvalHook args
